@@ -8,7 +8,6 @@ import servives.CombatService;
 import servives.EngineService;
 import servives.EntityService;
 import servives.EnvironnementService;
-import tools.Cellule;
 
 public class EngineImplem implements EngineService {
 	public EngineImplem() {}
@@ -24,7 +23,7 @@ public class EngineImplem implements EngineService {
 		do { 
 			this.envi.init(this.h,this.w); 
 		}
-		while( ! envi.isReachable(envi.getCell(envi.getHeight()-1, envi.getWidth()-1),envi.getCell(0, 0), new ArrayList<Cellule>()));
+		while( ! envi.isReachable(envi.getHeight()-1, envi.getWidth()-1,0,0));
 		this.combat = new CombatImplem();
 		combat.init(this.envi.getEntities().get(0));
 	}

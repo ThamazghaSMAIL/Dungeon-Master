@@ -1,21 +1,18 @@
 package contracts;
 
 import decorators.EnvironnementDecorator;
-import servives.EntityService;
 import servives.EnvironnementService;
-import servives.MobService;
 import tools.Cell;
-import tools.Cellule;
 import tools.InvariantError;
-import tools.Option;
 import tools.OptionEnum;
 import tools.PreconditionError;
 
-public class EnvironnementContract extends EnvironnementDecorator{//include Map
-
+public class EnvironnementContract extends EnvironnementDecorator implements EnvironnementService{//include Map
+	EnvironnementService serv;
 
 	public EnvironnementContract(EnvironnementService serv) {
 		super(serv);
+		this.serv = serv;
 	}
 
 
@@ -58,15 +55,15 @@ public class EnvironnementContract extends EnvironnementDecorator{//include Map
 		checkInvariant();
 
 		//pre OpenDoor(M,x,y) requires CellNature(M,x,y) = DNC || DWC 
-		if( ! ((getCellNature(i, j) == Cell.DNC) || (getCellNature(i, j) == Cell.DWC) ) )
+		if( ! serv.getCells()[i][j].getNature().equals(Cell.DNC) || serv.getCells()[i][j].getNature().equals(Cell.DWC) ) 
 			throw new PreconditionError("ce n'est pas une porte ouverte ! ");
 
-		Cell cellNaturePre = getCellNature(i, j);
+		Cell cellNaturePre = serv.getCells()[i][j].getNature();
 
 		Cell [][] cellNaturePres = new Cell [getHeight()][getHeight()];
 		for( k = 0; k < getHeight() ; k++)
 			for( l = 0 ; l < getWidth() ; l++ ){
-				cellNaturePres[k][l] = getCellNature(k, l);
+				cellNaturePres[k][l] = serv.getCells()[k][l].getNature();
 			}
 
 
@@ -76,11 +73,11 @@ public class EnvironnementContract extends EnvironnementDecorator{//include Map
 		forall u dans [0; Width(M)-1] forall v dans [0; Height(M)-1] (u != x or v != y)
 		implies CellNature(OpenDoor(M,x,y),u,v) = CellNature(M,u,v)*/
 
-		if( cellNaturePre == Cell.DWC && getCellNature(i, j) != Cell.DWO ){
+		if( cellNaturePre == Cell.DWC && !serv.getCells()[i][j].getNature().equals(Cell.DWO )){
 			throw new InvariantError("la porte n'a pas pu être ouverte ");
 		}
 
-		if( cellNaturePre == Cell.DNC && getCellNature(i, j) != Cell.DNO ){
+		if( cellNaturePre == Cell.DNC && !serv.getCells()[i][j].getNature().equals(Cell.DNO ) ){
 			throw new InvariantError("la porte n'a pas pu être ouverte ");
 		}
 
@@ -88,7 +85,7 @@ public class EnvironnementContract extends EnvironnementDecorator{//include Map
 		for( k = 0; k < getHeight() ; k++)
 			for( l = 0 ; l < getWidth() ; l++ )
 				if( k != i && l != j){
-					if( getCellNature(k, l) != cellNaturePres[k][l] ){
+					if( serv.getCells()[k][l].getNature().equals(cellNaturePres[k][l]) ){
 						bool = false ;
 						break;
 					}
@@ -106,19 +103,19 @@ public class EnvironnementContract extends EnvironnementDecorator{//include Map
 		int k=0,l = 0;
 		checkInvariant();
 		//pre OpenDoor(M,x,y) requires CellNature(M,x,y) = DNC || DWC 
-		if( ! ((getCellNature(i, j) == Cell.DNO) || (getCellNature(i, j) == Cell.DWO) ) )
+		if( !serv.getCells()[i][j].getNature().equals(Cell.DNO) || !serv.getCells()[i][j].getNature().equals(Cell.DWO) )
 			throw new PreconditionError("ce n'est pas une porte ouverte ! ");
 
 		//pre CloseDoor(M,x,y) requires CellContent(M,x,y) = N
-		if( ! (getCellContent(i, j).equals(OptionEnum.No)) )
+		if( ! serv.getCells()[k][l].getContent().equals(OptionEnum.No)) 
 			throw new PreconditionError("cette porte ne peut pas être fermée ! il y a un Mob sur place ");
 
-		Cell cellNaturePre = getCellNature(i, j);
+		Cell cellNaturePre = serv.getCells()[i][j].getNature();
 
 		Cell [][] cellNaturePres = new Cell [getHeight()][getHeight()];
 		for( k = 0; k < getHeight() ; k++)
 			for( l = 0 ; l < getWidth() ; l++ ){
-				cellNaturePres[k][l] = getCellNature(k, l);
+				cellNaturePres[k][l] = serv.getCells()[k][l].getNature();
 			}
 
 
@@ -128,11 +125,11 @@ public class EnvironnementContract extends EnvironnementDecorator{//include Map
 		forall u dans [0; Width(M)-1] forall v dans [0; Height(M)-1] (u != x or v != y)
 		implies CellNature(CloseDoor(M,x,y),u,v) = CellNature(M,u,v)*/
 
-		if(cellNaturePre == Cell.DWO && getCellNature(i, j) != Cell.DWC ){
+		if(cellNaturePre == Cell.DWO && !serv.getCells()[i][j].getNature().equals(Cell.DWC) ){
 			throw new InvariantError("la porte n'a pas pu être fermée ");
 		}
 
-		if(cellNaturePre == Cell.DNO && getCellNature(i, j) != Cell.DNC ){
+		if(cellNaturePre == Cell.DNO && !serv.getCells()[i][j].getNature().equals(Cell.DNC) ){
 			throw new InvariantError("la porte n'a pas pu être fermée ");
 		}
 
@@ -140,7 +137,7 @@ public class EnvironnementContract extends EnvironnementDecorator{//include Map
 		for( k = 0; k < getHeight() ; k++)
 			for( l = 0 ; l < getWidth() ; l++ )
 				if( k != i && l != j){
-					if( getCellNature(k, l) != cellNaturePres[k][l] ){
+					if( !serv.getCells()[k][l].getNature().equals(cellNaturePres[k][l])){
 						bool = false ;
 						break;
 					}
@@ -153,12 +150,5 @@ public class EnvironnementContract extends EnvironnementDecorator{//include Map
 		checkInvariant();
 	}//ok
 
-	@Override
-	public OptionEnum getCellContent(int col, int row) {	
-		if( col < 0 || row <0 || col >= this.getWidth() || row >= this.getHeight() ) {
-			throw new InvariantError(" cette case dépasse la map"); 
-		}
-			
-			return null;
-	}
+	
 }

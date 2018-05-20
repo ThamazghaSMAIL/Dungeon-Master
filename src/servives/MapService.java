@@ -1,17 +1,14 @@
 package servives;
 
-
-
-import tools.Cell;
-import tools.Cellule;
+import implm.CelluleImplem;
 
 public interface MapService {
 
+	/*Observators*/
+	public CelluleImplem[][] getCells() ;
+	public void setCells(CelluleImplem[][] cells) ;
 	
-	/**
-	 * const Height: [Map]!int
-	 * @return
-	 */
+	
 	public int getHeight();
 	public int getWidth();
 	
@@ -20,16 +17,17 @@ public interface MapService {
 	
 	
 	
+	/*Constructors*/
 	/**
-	 * pre CellNature(M,x,y) requires 0 <= x < Width(M) and 0 <= y < Height(M)
-	 * @param i
-	 * @param j
-	 * @return
+	 * pre init(w,h) requires 0 < w and 0 < h
+	 * @param l
+	 * @param c
 	 */
-	public Cell getCellNature( int i,int j );
+	public void init(int height, int width);
 	
+	/*Operators*/
 	/**
-	 * pre OpenDoor(M,x,y) requires CellNature(M,x,y) { fDNC, DWC }
+	 * pre OpenDoor(M,x,y) requires CellNature(M,x,y) { DNC, DWC }
 	 * @param i
 	 * @param j
 	 */
@@ -41,19 +39,8 @@ public interface MapService {
 	 * @param j
 	 */
 	public void CloseDoor (int i,int j);
-	//public MapService  getMapService();
-	//public void  setMapService(MapService mapService);
-	
-	/**
-	 * pre init(w,h) requires 0 < w and 0 < h
-	 * @param l
-	 * @param c
-	 */
 	
 	
-	public Cellule getCell(int i, int j);
-	public Cellule[][] getCells() ;
-	public void setCells(Cellule[][] cells) ;
-	public void init(int height, int width);
+	
 	
 }

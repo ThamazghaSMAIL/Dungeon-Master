@@ -10,16 +10,6 @@ public class CelluleDecorator implements CelluleService{
 	protected CelluleService serv;
 
 	@Override
-	public boolean getClef() {
-		return serv.getClef();
-	}
-
-	@Override
-	public void setClef(boolean b) {
-		serv.setClef(b);
-	}
-
-	@Override
 	public OptionEnum getContent() {
 		return serv.getContent();
 	}
@@ -69,15 +59,6 @@ public class CelluleDecorator implements CelluleService{
 		serv.setNature(nature);		
 	}
 
-	@Override
-	public Cell getNaturePrec() {
-		return serv.getNaturePrec();
-	}
-
-	@Override
-	public void setNaturePrec(Cell nature) {
-		serv.setNaturePrec(nature);		
-	}
 
 	@Override
 	public void init(int i, int j, Cell nature) {

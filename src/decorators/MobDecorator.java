@@ -26,8 +26,8 @@ public class MobDecorator implements MobService {
 
 
 	@Override
-	public Face getDir() {
-		return serv.getDir();
+	public Face getFace() {
+		return serv.getFace();
 	}
 
 
@@ -107,21 +107,4 @@ public class MobDecorator implements MobService {
 	public boolean getTresorFound() {
 		return serv.getTresorFound();
 	}
-
-
-	@Override
-	public int getNbClefs() {
-		return serv.getNbClefs();
-	}
-
-
-	@Override
-	public void setNbClefs(int nb) {
-		serv.setNbClefs(nb);
-	}
-
-	
-
-	
-
 }

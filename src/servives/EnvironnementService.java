@@ -2,20 +2,11 @@ package servives;
 
 import java.util.List;
 
-import implm.EnvironmentImplem;
 import tools.Cell;
-import tools.Cellule;
+import implm.CelluleImplem;
 import tools.OptionEnum;
 
 public interface EnvironnementService extends  MapService {
-
-	
-	OptionEnum getCellContent(int row, int col);
-
-	
-	
-	//duplication des meth de Map car include 
-	
 
 	/**
 	 * const Height: [Map]!int
@@ -26,16 +17,6 @@ public interface EnvironnementService extends  MapService {
 	
 	public void setHeight(int h);
 	public void setWidth(int w);
-	
-	
-	
-	/**
-	 * pre CellNature(M,x,y) requires 0 <= x < Width(M) and 0 <= y < Height(M)
-	 * @param i
-	 * @param j
-	 * @return
-	 */
-	public Cell getCellNature( int i,int j );
 	
 	/**
 	 * pre OpenDoor(M,x,y) requires CellNature(M,x,y) { fDNC, DWC }
@@ -59,16 +40,17 @@ public interface EnvironnementService extends  MapService {
 	 */
 	public void init( int height, int width);
 	
-	public Cellule getCell(int i, int j);
-	public Cellule[][] getCells() ;
-	public void setCells(Cellule[][] cells) ;
+	public CelluleImplem[][] getCells() ;
+	public void setCells(CelluleImplem[][] cells) ;
 
 	public List<EntityService> getEntities();
 	public void setEntities( List<EntityService> en);
-	public Cellule getTresor();
-	
 	
 	public boolean YaUnMob(int i , int j );
 
-	boolean isReachable(Cellule depart, Cellule arrivé, List<Cellule> dejaVisites);
+	
+	public TresorService getTresor();
+	public ClefService getClef();
+	boolean isReachable(int x1, int y1, int x2, int y2);
+	
 }

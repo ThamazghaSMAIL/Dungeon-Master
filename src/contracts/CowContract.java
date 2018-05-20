@@ -9,10 +9,11 @@ import tools.OptionEnum;
 import tools.PreconditionError;
 import decorators.CowDecorator;
 
-public class CowContract extends CowDecorator{
-
+public class CowContract extends CowDecorator implements CowService{
+	CowService serv;
 	public CowContract(CowService delegate) {
 		super(delegate);
+		serv = delegate;
 	}
 
 
@@ -20,15 +21,15 @@ public class CowContract extends CowDecorator{
 	public void checkInvariant(){
 		//0 ≤ Col(M) < Environment::Width(Envi(M))
 		//0 ≤ Row(M) < Environment::Height(Envi(M))
-		if( this.getCol() < 0 || this.getRow() < 0 || this.getCol() > this.getEnv().getWidth() || this.getRow() > this.getEnv().getHeight() ) {
+		if( serv.getCol() < 0 || serv.getRow() < 0 || serv.getCol() > serv.getEnv().getWidth() || serv.getRow() > serv.getEnv().getHeight() ) {
 			throw new InvariantError("le Mob ne peut être initialisé ! ses coordonnées dépassent les dimentions de l'env");
 		}
 
 		//Environment::CellNature(Envi(M),Col(M),Row(M)) ∈ {WLL, DNC, DWC}
 
-		if( (this.getEnv().getCellNature(this.getRow(), this.getCol())).equals(Cell.WLL) || 
-				(this.getEnv().getCellNature(this.getRow(), this.getCol())).equals(Cell.DNC) ||
-				(this.getEnv().getCellNature(this.getRow(), this.getCol())).equals(Cell.DWC)) {
+		if(serv.getEnv().getCells()[serv.getRow()][serv.getCol()].getNature().equals(Cell.WLL) || 
+				serv.getEnv().getCells()[serv.getRow()][serv.getCol()].getNature().equals(Cell.DNC) ||
+				serv.getEnv().getCells()[serv.getRow()][serv.getCol()].getNature().equals(Cell.DWC)) {
 			throw new InvariantError("le Mob ne peut être sur un WLL/DNC/DWC");
 		}
 	}
@@ -36,16 +37,16 @@ public class CowContract extends CowDecorator{
 	@Override
 	public void init(int row, int col, int hp , Face face , EnvironnementService env) {
 		checkInvariant();
-		if( this.getHp() <= 0 ) {
+		if( serv.getHp() <= 0 ) {
 			throw new PreconditionError("hp est négatif");
 		}
 
 
-		if( this.getCol() < 0 || this.getCol() > this.getEnv().getWidth() || this.getRow() < 0 || this.getRow() > this.getEnv().getHeight() ) {
+		if( serv.getCol() < 0 || serv.getCol() > serv.getEnv().getWidth() || serv.getRow() < 0 || serv.getRow() > serv.getEnv().getHeight() ) {
 			throw new PreconditionError("le Mob ne peut être initialisé ! ses coordonnées dépassent les dimentions de l'env");
 		}
 
-		if( this.getHp() != 4 || this.getHp() != 3 ) {
+		if( serv.getHp() != 4 || serv.getHp() != 3 ) {
 			throw new PreconditionError("une vache ne peut pas avoir plus de 4 ou moins de 3 points de vie");
 		}
 
@@ -53,12 +54,12 @@ public class CowContract extends CowDecorator{
 		super.init(row, col, hp, face, env);
 
 
-//		if( this.getCol() != col || this.getRow() != row || this.getFace() != face || this.getEnv() != env ) {
-//			throw new InvariantError("le Mob ne peut être initialisé ! ses coordonnées dépassent les dimentions de l'env");
-//		}
-//
-//		if( this.getHp() != h )
-//			throw new InvariantError("Hp n'est pas coherant !");
+		//		if( serv.getCol() != col || serv.getRow() != row || serv.getFace() != face || serv.getEnv() != env ) {
+		//			throw new InvariantError("le Mob ne peut être initialisé ! ses coordonnées dépassent les dimentions de l'env");
+		//		}
+		//
+		//		if( serv.getHp() != h )
+		//			throw new InvariantError("Hp n'est pas coherant !");
 
 		checkInvariant();
 	}
@@ -66,106 +67,112 @@ public class CowContract extends CowDecorator{
 	@Override
 	public void step () {
 		checkInvariant();
-		int col = this.getCol();
-		int row = this.getRow();
+		int col = serv.getCol();
+		int row = serv.getRow();
 		super.step();
 		//Col(M) - 1 ≤ Col(step(M)) ≤ Col(M) + 1
-		if( this.getCol() < col -1 || this.getCol() > col + 1) {
+		if( serv.getCol() < col -1 || serv.getCol() > col + 1) {
 			throw new InvariantError("y a un pblm dans step");
 		}
 		//Row(M) - 1 ≤ Row(step(M)) ≤ Row(M) + 1
-		if( this.getRow() < row - 1 || this.getRow() > row + 1) {
+		if( serv.getRow() < row - 1 || serv.getRow() > row + 1) {
 			throw new InvariantError("y a un pblm dans step");
 		}
 	}
-	
-	
-	
+
+
+
 	@Override
 	public void forward() {
 		checkInvariant();
 
-		int row = this.getRow();
-		int col = this.getCol();
-		Face dir = this.getFace();
-		super.forward();
+		int row = serv.getRow();
+		int col = serv.getCol();
+		Face dir = serv.getFace();
+		serv.forward();
 
 		/*****N*******/
 		if( dir.equals(Face.N) &&
-				((this.getEnv().getCellNature(row+1 , col).equals(Cell.EMP)||this.getEnv().getCellNature(row+1 , col).equals(Cell.DNO)) &&
-						row+1 <this.getEnv().getHeight() &&
-						this.getEnv().getCellContent(row+1, col).equals(OptionEnum.No)) &&
-
-				(this.getRow() != row+1 || this.getCol() != col || ! this.getFace().equals(Face.N))){
+				(serv.getEnv().getCells()[row+1][col].getNature().equals(Cell.EMP)||
+						serv.getEnv().getCells()[row+1][col].getNature().equals(Cell.DNO)) &&
+				row+1 <serv.getEnv().getHeight() &&
+				serv.getEnv().getCells()[row+1][col].getNature().equals(OptionEnum.No) &&
+				(serv.getRow() != row+1 || serv.getCol() != col || ! serv.getFace().equals(Face.N))){
 			throw new InvariantError("le Mob n'a pas avancé au Nord");
 		}
 
 		if( dir.equals(Face.N) &&
-				( ((! this.getEnv().getCellNature(row+1 , col).equals(Cell.EMP) && ! this.getEnv().getCellNature(row+1 , col).equals(Cell.DNO)) || 
-						row+1 >= this.getEnv().getHeight() ||
-						! this.getEnv().getCellContent(row+1, col).equals(OptionEnum.No)) &&
-
-						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.N))) ){
+				(! serv.getEnv().getCells()[row+1][col].getNature().equals(Cell.EMP) &&
+						! serv.getEnv().getCells()[row+1][col].getNature().equals(Cell.DNO) || 
+						row+1 >= serv.getEnv().getHeight() ||
+						! serv.getEnv().getCells()[row+1][col].getContent().equals(OptionEnum.No)) &&
+				(serv.getRow() != row || serv.getCol() != col || ! serv.getFace().equals(Face.N))){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
 		}
 
 		/*****E*******/
 
 		if( dir.equals(Face.E) &&
-				((this.getEnv().getCellNature(row , col+1).equals(Cell.EMP)||this.getEnv().getCellNature(row , col+1).equals(Cell.DNO)) &&
-						col+1 <this.getEnv().getWidth() &&
-						this.getEnv().getCellContent(row, col+1).equals(OptionEnum.No)) &&
+				((serv.getEnv().getCells()[row][col+1].getNature().equals(Cell.EMP)||
+						serv.getEnv().getCells()[row][col+1].getNature().equals(Cell.DNO)) &&
+						col+1 <serv.getEnv().getWidth() &&
+						serv.getEnv().getCells()[row][col+1].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row || this.getCol() != col+1 || ! this.getFace().equals(Face.N))){
+				(serv.getRow() != row || serv.getCol() != col+1 || ! serv.getFace().equals(Face.N))){
 			throw new InvariantError("le Mob n'a pas avancé à l'est");
 		}
 
 		if( dir.equals(Face.E) &&
-				( (! this.getEnv().getCellNature(row , col+1).equals(Cell.EMP) && ! this.getEnv().getCellNature(row , col+1).equals(Cell.DNO)) || 
-						col+1 >= this.getEnv().getHeight() ||
-						! this.getEnv().getCellContent(row, col+1).equals(OptionEnum.No) &&
+				( (! serv.getEnv().getCells()[row][col+1].getNature().equals(Cell.EMP) && 
+						! serv.getEnv().getCells()[row][col+1].getNature().equals(Cell.DNO)) || 
+						col+1 >= serv.getEnv().getHeight() ||
+						! serv.getEnv().getCells()[row][col+1].getContent().equals(OptionEnum.No) &&
 
-						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.N))) ){
+						(serv.getRow() != row || serv.getCol() != col || ! serv.getFace().equals(Face.N))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
 		}
 
 		/*****S*******/
 
 		if( dir.equals(Face.S) &&
-				((this.getEnv().getCellNature(row-1 , col).equals(Cell.EMP)||this.getEnv().getCellNature(row-1 , col).equals(Cell.DNO)) &&
+				((serv.getEnv().getCells()[row-1][col].getNature().equals(Cell.EMP) ||
+						serv.getEnv().getCells()[row-1][col].getNature().equals(Cell.DNO)) &&
 						row-1 >= 0 &&
-						this.getEnv().getCellContent(row-1 , col).equals(OptionEnum.No)) &&
+						serv.getEnv().getCells()[row-1][col].equals(OptionEnum.No)) &&
 
-				(this.getRow() != row-1 || this.getCol() != col || ! this.getFace().equals(Face.N))){
+				(serv.getRow() != row-1 || serv.getCol() != col || ! serv.getFace().equals(Face.N))){
 			throw new InvariantError("le Mob n'a pas avancé au Sud");
 		}
 
 		if( dir.equals(Face.S) &&
-				( (! this.getEnv().getCellNature(row-1 , col).equals(Cell.EMP) && ! this.getEnv().getCellNature(row-1 , col).equals(Cell.DNO)) || 
+				( (! serv.getEnv().getCells()[row-1][col].getNature().equals(Cell.EMP) && 
+						! serv.getEnv().getCells()[row-1][col].getNature().equals(Cell.DNO)) || 
 						row-1 < 0 ||
-						! this.getEnv().getCellContent(row-1, col).equals(OptionEnum.No) &&
+						! serv.getEnv().getCells()[row-1][col].getContent().equals(OptionEnum.No) &&
 
-						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.N))) ){
+						(serv.getRow() != row || serv.getCol() != col || ! serv.getFace().equals(Face.N))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
 		}
 
 		/*****W*******/
 
 		if(dir.equals(Face.W) &&
-				((this.getEnv().getCellNature(row , col-1).equals(Cell.EMP)||this.getEnv().getCellNature(row , col-1).equals(Cell.DNO)) &&
+				((serv.getEnv().getCells()[row ][col-1].getNature().equals(Cell.EMP)||
+						serv.getEnv().getCells()[row ][col-1].getNature().equals(Cell.DNO)) &&
 						col-1 >= 0 &&
-						this.getEnv().getCellContent(row , col-1).equals(OptionEnum.No)) &&
+						serv.getEnv().getCells()[row ][col-1].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row || this.getCol() != col-1 || ! this.getFace().equals(Face.N)) ){
+				(serv.getRow() != row || serv.getCol() != col-1 || ! serv.getFace().equals(Face.N)) ){
 			throw new InvariantError("le Mob n'a pas avancé au W");
 		}
 
 		if( dir.equals(Face.W) &&
-				( (! this.getEnv().getCellNature(row , col-1).equals(Cell.EMP) && ! this.getEnv().getCellNature(row , col-1).equals(Cell.DNO)) || 
+				( (! serv.getEnv().getCells()[row][col-1].getNature().equals(Cell.EMP) && 
+						! serv.getEnv().getCells()[row][col-1].getNature().equals(Cell.DNO)) || 
 						row-1 < 0 ||
-						! this.getEnv().getCellContent(row-1, col).equals(OptionEnum.No)) &&
+						! serv.getEnv().getCells()[row][col-1].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.N)) ) {
+				(serv.getRow() != row || serv.getCol() != col || ! serv.getFace().equals(Face.N)) ) {
 			throw new InvariantError("Le Mob n'est pas en bonne position");
 		}
 		checkInvariant();
@@ -174,85 +181,93 @@ public class CowContract extends CowDecorator{
 	public void backward() {
 		checkInvariant();
 
-		int row = this.getRow();
-		int col = this.getCol();
-		Face dir = this.getFace();
+		int row = serv.getRow();
+		int col = serv.getCol();
+		Face dir = serv.getFace();
 		super.backward();
 
 		/*****N*******/
 		if( dir.equals(Face.N) &&
-				((this.getEnv().getCellNature(row-1 , col).equals(Cell.EMP)||this.getEnv().getCellNature(row-1 , col).equals(Cell.DNO)) &&
+				((serv.getEnv().getCells()[row-1][col].getNature().equals(Cell.EMP) ||
+						serv.getEnv().getCells()[row-1][col].getNature().equals(Cell.DNO)) &&
 						row-1 >=0 &&
-						this.getEnv().getCellContent(row-1, col).equals(OptionEnum.No)) &&
+						serv.getEnv().getCells()[row-1][col].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row-1 || this.getCol() != col || ! this.getFace().equals(Face.N))){
+				(serv.getRow() != row-1 || serv.getCol() != col || ! serv.getFace().equals(Face.N))){
 			throw new InvariantError("le Mob n'a pas reculer ");
 		}
 
 		if( dir.equals(Face.N) &&
-				( ((! this.getEnv().getCellNature(row-1 , col).equals(Cell.EMP) && ! this.getEnv().getCellNature(row-1 , col).equals(Cell.DNO)) || 
+				( ((! serv.getEnv().getCells()[row-1][col].getNature().equals(Cell.EMP) && 
+						! serv.getEnv().getCells()[row-1][col].getNature().equals(Cell.DNO)) || 
 						row-1 < 0 ||
-						! this.getEnv().getCellContent(row-1, col).equals(OptionEnum.No)) &&
+						! serv.getEnv().getCells()[row-1][col].getContent().equals(OptionEnum.No)) &&
 
-						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.N))) ){
+						(serv.getRow() != row || serv.getCol() != col || ! serv.getFace().equals(Face.N))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
 		}
 
 		/*****S*******/
 		if( dir.equals(Face.S) &&
-				((this.getEnv().getCellNature(row+1 , col).equals(Cell.EMP)||this.getEnv().getCellNature(row+1 , col).equals(Cell.DNO)) &&
-						row+1 <this.getEnv().getHeight() &&
-						this.getEnv().getCellContent(row+1, col).equals(OptionEnum.No)) &&
+				((serv.getEnv().getCells()[row+1][col].getNature().equals(Cell.EMP) ||
+						serv.getEnv().getCells()[row+1][col].getNature().equals(Cell.DNO)) &&
+						row+1 <serv.getEnv().getHeight() &&
+						serv.getEnv().getCells()[row+1][col].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row+1 || this.getCol() != col || ! this.getFace().equals(Face.S))){
+				(serv.getRow() != row+1 || serv.getCol() != col || ! serv.getFace().equals(Face.S))){
 			throw new InvariantError("le Mob n'a pas reculé");
 		}
 
 		if( dir.equals(Face.S) &&
-				((! this.getEnv().getCellNature(row+1 , col).equals(Cell.EMP) && ! this.getEnv().getCellNature(row+1 , col).equals(Cell.DNO)) || 
-						row+1 >= this.getEnv().getHeight() ||
-						! this.getEnv().getCellContent(row+1, col).equals(OptionEnum.No)) &&
+				((! serv.getEnv().getCells()[row+1][col].getNature().equals(Cell.EMP) &&
+						! serv.getEnv().getCells()[row+1][col].getNature().equals(Cell.DNO)) || 
+						row+1 >= serv.getEnv().getHeight() ||
+						! serv.getEnv().getCells()[row+1][col].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row || this.getCol() != col|| ! this.getFace().equals(Face.S)) ){
+				(serv.getRow() != row || serv.getCol() != col|| ! serv.getFace().equals(Face.S)) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
 		}
 
 		/*****E*******/
 		if( dir.equals(Face.E) &&
-				((this.getEnv().getCellNature(row , col+1).equals(Cell.EMP)||this.getEnv().getCellNature(row , col+1).equals(Cell.DNO)) &&
-						col+1 < this.getEnv().getWidth() &&
-						this.getEnv().getCellContent(row, col+1).equals(OptionEnum.No)) &&
+				((serv.getEnv().getCells()[row][col+1].getNature().equals(Cell.EMP)||
+						serv.getEnv().getCells()[row][col+1].getNature().equals(Cell.DNO)) &&
+						col+1 < serv.getEnv().getWidth() &&
+						serv.getEnv().getCells()[row][col+1].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row || this.getCol() != col+1 || ! this.getFace().equals(Face.E))){
+				(serv.getRow() != row || serv.getCol() != col+1 || ! serv.getFace().equals(Face.E))){
 			throw new InvariantError("le Mob n'a pas reculé");
 		}
 
 		if( dir.equals(Face.E) &&
-				((! this.getEnv().getCellNature(row , col+1).equals(Cell.EMP) && ! this.getEnv().getCellNature(row , col+1).equals(Cell.DNO)) || 
-						col+1 >= this.getEnv().getWidth() ||
-						! this.getEnv().getCellContent(row, col+1).equals(OptionEnum.No)) &&
+				((! serv.getEnv().getCells()[row][col+1].getNature().equals(Cell.EMP) &&
+						! serv.getEnv().getCells()[row][col+1].getNature().equals(Cell.DNO)) || 
+						col+1 >= serv.getEnv().getWidth() ||
+						! serv.getEnv().getCells()[row][col+1].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.E)) ){
+				(serv.getRow() != row || serv.getCol() != col || ! serv.getFace().equals(Face.E)) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
 		}
 
 		/*****W*******/
 
 		if( dir.equals(Face.W) &&
-				((this.getEnv().getCellNature(row , col-1).equals(Cell.EMP)||this.getEnv().getCellNature(row , col-1).equals(Cell.DNO)) &&
+				((serv.getEnv().getCells()[row][col-1].getNature().equals(Cell.EMP)||
+						serv.getEnv().getCells()[row][col-1].getNature().equals(Cell.DNO)) &&
 						col-1 >=0 &&
-						this.getEnv().getCellContent(row, col-1).equals(OptionEnum.No)) &&
+						serv.getEnv().getCells()[row][col-1].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row || this.getCol() != col-1 || ! this.getFace().equals(Face.W))){
+				(serv.getRow() != row || serv.getCol() != col-1 || ! serv.getFace().equals(Face.W))){
 			throw new InvariantError("le Mob n'a pas reculé");
 		}
 
 		if( dir.equals(Face.W) &&
-				((! this.getEnv().getCellNature(row , col-1).equals(Cell.EMP) && ! this.getEnv().getCellNature(row , col-1).equals(Cell.DNO)) || 
+				((! serv.getEnv().getCells()[row][col-1].getNature().equals(Cell.EMP) &&
+						! serv.getEnv().getCells()[row][col-1].getNature().equals(Cell.DNO)) || 
 						col-1 < 0 ||
-						! this.getEnv().getCellContent(row, col-1).equals(OptionEnum.No)) &&
+						! serv.getEnv().getCells()[row][col-1].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.W)) ){
+				(serv.getRow() != row || serv.getCol() != col || ! serv.getFace().equals(Face.W)) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
 		}
 		checkInvariant();
@@ -263,22 +278,22 @@ public class CowContract extends CowDecorator{
 	public void turnL() {
 		checkInvariant();
 		//Face(M)=N implies Face(TurnLeft(M))=W
-		Face dir = this.getFace();
+		Face dir = serv.getFace();
 		super.turnL();
 
-		if( dir.equals(Face.N) && ! this.getFace().equals(Face.W))
+		if( dir.equals(Face.N) && ! serv.getFace().equals(Face.W))
 			throw new InvariantError("le Mob n'a pas tourné à gauche");
 
 		//Face(M)=W implies Face(TurnLeft(M))=S
-		if( dir.equals(Face.W) && ! this.getFace().equals(Face.S))
+		if( dir.equals(Face.W) && ! serv.getFace().equals(Face.S))
 			throw new InvariantError("le Mob n'a pas tourné à gauche");
 
 		//Face(M)=S implies Face(TurnLeft(M))=E
-		if( dir.equals(Face.S) && ! this.getFace().equals(Face.E))
+		if( dir.equals(Face.S) && ! serv.getFace().equals(Face.E))
 			throw new InvariantError("le Mob n'a pas tourné à gauche");
 
 		//Face(M)=E implies Face(TurnLeft(M))=N
-		if( dir.equals(Face.E) && ! this.getFace().equals(Face.N))
+		if( dir.equals(Face.E) && ! serv.getFace().equals(Face.N))
 			throw new InvariantError("le Mob n'a pas tourné à gauche");
 		checkInvariant();
 	}
@@ -287,22 +302,22 @@ public class CowContract extends CowDecorator{
 	@Override
 	public void turnR() {
 		checkInvariant();
-		Face dir = this.getFace();
+		Face dir = serv.getFace();
 		super.turnL();
 
-		if( dir.equals(Face.N) && ! this.getFace().equals(Face.E))
+		if( dir.equals(Face.N) && ! serv.getFace().equals(Face.E))
 			throw new InvariantError("le Mob n'a pas tourné à droite");
 
 		//Face(M)=W implies Face(TurnLeft(M))=S
-		if( dir.equals(Face.W) && ! this.getFace().equals(Face.N))
+		if( dir.equals(Face.W) && ! serv.getFace().equals(Face.N))
 			throw new InvariantError("le Mob n'a pas tourné à droite");
 
 		//Face(M)=S implies Face(TurnLeft(M))=W
-		if( dir.equals(Face.S) && ! this.getFace().equals(Face.W))
+		if( dir.equals(Face.S) && ! serv.getFace().equals(Face.W))
 			throw new InvariantError("le Mob n'a pas tourné à droite");
 
 		//Face(M)=E implies Face(TurnLeft(M))=S
-		if( dir.equals(Face.E) && ! this.getFace().equals(Face.S))
+		if( dir.equals(Face.E) && ! serv.getFace().equals(Face.S))
 			throw new InvariantError("le Mob n'a pas tourné à droite");
 
 		checkInvariant();
@@ -313,83 +328,91 @@ public class CowContract extends CowDecorator{
 	public void strafeL() {
 		checkInvariant();
 
-		int row = this.getRow();
-		int col = this.getCol();
-		Face dir = this.getFace();
+		int row = serv.getRow();
+		int col = serv.getCol();
+		Face dir = serv.getFace();
 
 		/*****N*******/
 		if( dir.equals(Face.N) &&
-				((this.getEnv().getCellNature(row , col-1).equals(Cell.EMP)||this.getEnv().getCellNature(row , col-1).equals(Cell.DNO)) &&
+				((serv.getEnv().getCells()[row][col-1].getNature().equals(Cell.EMP) ||
+						serv.getEnv().getCells()[row][col-1].getNature().equals(Cell.DNO)) &&
 						col-1 >= 0 &&
-						this.getEnv().getCellContent(row, col-1).equals(OptionEnum.No)) &&
+						serv.getEnv().getCells()[row][col-1].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row || this.getCol() != col-1 || ! this.getFace().equals(Face.N))){
+				(serv.getRow() != row || serv.getCol() != col-1 || ! serv.getFace().equals(Face.N))){
 			throw new InvariantError("le Mob n'a pas strafeL");
 		}
 
 		if( dir.equals(Face.N) &&
-				( ((! this.getEnv().getCellNature(row , col-1).equals(Cell.EMP) && ! this.getEnv().getCellNature(row , col-1).equals(Cell.DNO)) || 
+				( (! serv.getEnv().getCells()[row][col-1].getNature().equals(Cell.EMP) &&
+						! serv.getEnv().getCells()[row][col-1].getNature().equals(Cell.DNO) ||
 						col-1 < 0  ||
-						! this.getEnv().getCellContent(row, col-1).equals(OptionEnum.No)) &&
+						! serv.getEnv().getCells()[row][col-1].getContent().equals(OptionEnum.No)) &&
 
-						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.N))) ){
+						(serv.getRow() != row || serv.getCol() != col || ! serv.getFace().equals(Face.N))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
 		}
 
-		/*****S*******/
+		/*****S****ok***/
 		if( dir.equals(Face.S) &&
-				((this.getEnv().getCellNature(row , col+1).equals(Cell.EMP)||this.getEnv().getCellNature(row , col+1).equals(Cell.DNO)) &&
-						col+1 < this.getEnv().getWidth() &&
-						this.getEnv().getCellContent(row, col+1).equals(OptionEnum.No)) &&
+				(( serv.getEnv().getCells()[row ][col+1].getNature().equals(Cell.EMP) ||
+						serv.getEnv().getCells()[row ][col+1].getNature().equals(Cell.DNO)) &&
+						col+1 < serv.getEnv().getWidth() &&
+						serv.getEnv().getCells()[row ][col+1].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row || this.getCol() != col+1 || ! this.getFace().equals(Face.S))){
+				(serv.getRow() != row || serv.getCol() != col+1 || ! serv.getFace().equals(Face.S))){
 			throw new InvariantError("le Mob n'a pas strafeL");
 		}
 
 		if( dir.equals(Face.S) &&
-				( ((! this.getEnv().getCellNature(row , col+1).equals(Cell.EMP) && ! this.getEnv().getCellNature(row , col+1).equals(Cell.DNO)) || 
-						col+1 >= this.getEnv().getWidth() ||
-						! this.getEnv().getCellContent(row, col+1).equals(OptionEnum.No)) &&
+				( (( !serv.getEnv().getCells()[row][col+1].getNature().equals(Cell.EMP) &&
+						! serv.getEnv().getCells()[row][col+1].getNature().equals(Cell.DNO)) || 
+						col+1 >= serv.getEnv().getWidth() ||
+						! serv.getEnv().getCells()[row][col+1].getContent().equals(OptionEnum.No)) &&
 
-						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.S))) ){
+						(serv.getRow() != row || serv.getCol() != col || ! serv.getFace().equals(Face.S))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
 		}
 
-		/*****E*******/
+		/*****E****ok***/
 		if( dir.equals(Face.E) &&
-				((this.getEnv().getCellNature(row-1 , col).equals(Cell.EMP)||this.getEnv().getCellNature(row-1 , col).equals(Cell.DNO)) &&
+				(( serv.getEnv().getCells()[row-1][col].getNature().equals(Cell.EMP) ||
+						serv.getEnv().getCells()[row-1][col].getNature().equals(Cell.DNO)) &&
 						row-1 >= 0 &&
-						this.getEnv().getCellContent(row-1, col).equals(OptionEnum.No)) &&
+						serv.getEnv().getCells()[row-1][col].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row-1 || this.getCol() != col || ! this.getFace().equals(Face.E))){
+				(serv.getRow() != row-1 || serv.getCol() != col || ! serv.getFace().equals(Face.E))){
 			throw new InvariantError("le Mob n'a pas strafeL");
 		}
 
 		if( dir.equals(Face.E) &&
-				( ((! this.getEnv().getCellNature(row-1 , col).equals(Cell.EMP) && ! this.getEnv().getCellNature(row-1 , col).equals(Cell.DNO)) || 
+				( (! serv.getEnv().getCells()[row-1][col].getNature().equals(Cell.EMP) &&
+						! serv.getEnv().getCells()[row-1][col].getNature().equals(Cell.DNO)) ||
 						row-1 < 0 ||
-						! this.getEnv().getCellContent(row-1, col).equals(OptionEnum.No)) &&
+						! serv.getEnv().getCells()[row-1][col].getContent().equals(OptionEnum.No) &&
 
-						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.E))) ){
+						serv.getRow() != row || serv.getCol() != col || ! serv.getFace().equals(Face.E)) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
 		}
 
 		/*****W*******/
 		if( dir.equals(Face.W) &&
-				((this.getEnv().getCellNature(row+1 , col).equals(Cell.EMP)||this.getEnv().getCellNature(row+1 , col).equals(Cell.DNO)) &&
-						row+1 < this.getEnv().getHeight() &&
-						this.getEnv().getCellContent(row+1, col).equals(OptionEnum.No)) &&
+				((serv.getEnv().getCells()[row+1][col].getNature().equals(Cell.EMP)||
+						serv.getEnv().getCells()[row+1][col].getNature().equals(Cell.DNO)) &&
+						row+1 < serv.getEnv().getHeight() &&
+						serv.getEnv().getCells()[row+1][col].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row+1 || this.getCol() != col || ! this.getFace().equals(Face.W))){
+				(serv.getRow() != row+1 || serv.getCol() != col || ! serv.getFace().equals(Face.W))){
 			throw new InvariantError("le Mob n'a pas strafeL");
 		}
 
 		if( dir.equals(Face.W) &&
-				( ((! this.getEnv().getCellNature(row+1 , col).equals(Cell.EMP) && ! this.getEnv().getCellNature(row+1 , col).equals(Cell.DNO)) || 
-						row+1 >= this.getEnv().getHeight() ||
-						! this.getEnv().getCellContent(row+1, col).equals(OptionEnum.No)) &&
+				( ((! serv.getEnv().getCells()[row+1][col].getNature().equals(Cell.EMP) &&
+						! serv.getEnv().getCells()[row+1][col].getNature().equals(Cell.DNO)) || 
+						row+1 >= serv.getEnv().getHeight() ||
+						! serv.getEnv().getCells()[row+1][col].getContent().equals(OptionEnum.No)) &&
 
-						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.E))) ){
+						(serv.getRow() != row || serv.getCol() != col || ! serv.getFace().equals(Face.E))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
 		}
 		checkInvariant();
@@ -401,85 +424,93 @@ public class CowContract extends CowDecorator{
 
 		checkInvariant();
 
-		int row = this.getRow();
-		int col = this.getCol();
-		Face dir = this.getFace();
+		int row = serv.getRow();
+		int col = serv.getCol();
+		Face dir = serv.getFace();
 		/*****N*******/
 		if( dir.equals(Face.N) &&
-				((this.getEnv().getCellNature(row , col+1).equals(Cell.EMP)||this.getEnv().getCellNature(row , col+1).equals(Cell.DNO)) &&
-						col+1 < this.getEnv().getWidth() &&
-						this.getEnv().getCellContent(row, col+1).equals(OptionEnum.No)) &&
+				((serv.getEnv().getCells()[row][col+1].getNature().equals(Cell.EMP) ||
+						serv.getEnv().getCells()[row][col+1].getNature().equals(Cell.DNO)) &&
+						col+1 < serv.getEnv().getWidth() &&
+						serv.getEnv().getCells()[row][col+1].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row || this.getCol() != col+1 || ! this.getFace().equals(Face.N))){
+				(serv.getRow() != row || serv.getCol() != col+1 || ! serv.getFace().equals(Face.N))){
 			throw new InvariantError("le Mob n'a pas strafeR");
 		}
 
 		if( dir.equals(Face.N) &&
-				( ((! this.getEnv().getCellNature(row , col+1).equals(Cell.EMP) && ! this.getEnv().getCellNature(row , col+1).equals(Cell.DNO)) || 
-						col+1 >= this.getEnv().getWidth() ||
-						! this.getEnv().getCellContent(row, col+1).equals(OptionEnum.No)) &&
+				( ((!serv.getEnv().getCells()[row][col+1].getNature().equals(Cell.EMP) &&
+						! serv.getEnv().getCells()[row][col+1].getNature().equals(Cell.DNO)) || 
+						col+1 >= serv.getEnv().getWidth() ||
+						! serv.getEnv().getCells()[row][col+1].getContent().equals(OptionEnum.No)) &&
 
-						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.N))) ){
+						(serv.getRow() != row || serv.getCol() != col || ! serv.getFace().equals(Face.N))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
 		}
 
 		/*****S*******/
 		if( dir.equals(Face.S) &&
-				((this.getEnv().getCellNature(row , col-1).equals(Cell.EMP)||this.getEnv().getCellNature(row , col-1).equals(Cell.DNO)) &&
+				((serv.getEnv().getCells()[row][col-1].getNature().equals(Cell.EMP) ||
+						serv.getEnv().getCells()[row][col-1].getNature().equals(Cell.DNO)) &&
 						col-1 >= 0 &&
-						this.getEnv().getCellContent(row, col-1).equals(OptionEnum.No)) &&
+						serv.getEnv().getCells()[row][col-1].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row || this.getCol() != col-1 || ! this.getFace().equals(Face.S))){
+				(serv.getRow() != row || serv.getCol() != col-1 || ! serv.getFace().equals(Face.S))){
 			throw new InvariantError("le Mob n'a pas strafeR");
 		}
 
 		if( dir.equals(Face.S) &&
-				( ((! this.getEnv().getCellNature(row , col-1).equals(Cell.EMP) && ! this.getEnv().getCellNature(row , col-1).equals(Cell.DNO)) || 
+				( ((! serv.getEnv().getCells()[row][col-1].getNature().equals(Cell.EMP) &&
+						! serv.getEnv().getCells()[row][col-1].getNature().equals(Cell.DNO)) || 
 						col-1 < 0  ||
-						! this.getEnv().getCellContent(row, col-1).equals(OptionEnum.No)) &&
+						! serv.getEnv().getCells()[row][col-1].getContent().equals(OptionEnum.No)) &&
 
-						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.S))) ){
+						(serv.getRow() != row || serv.getCol() != col || ! serv.getFace().equals(Face.S))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
 		}
 
 		/*****E*******/
 		if( dir.equals(Face.E) &&
-				((this.getEnv().getCellNature(row+1 , col).equals(Cell.EMP)||this.getEnv().getCellNature(row+1 , col).equals(Cell.DNO)) &&
-						row+1 < this.getEnv().getHeight() &&
-						this.getEnv().getCellContent(row+1, col).equals(OptionEnum.No)) &&
+				((serv.getEnv().getCells()[row+1][col].getNature().equals(Cell.EMP)||
+						serv.getEnv().getCells()[row+1][col].getNature().equals(Cell.DNO)) &&
+						row+1 < serv.getEnv().getHeight() &&
+						serv.getEnv().getCells()[row+1][col].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row+1 || this.getCol() != col || ! this.getFace().equals(Face.E))){
+				(serv.getRow() != row+1 || serv.getCol() != col || ! serv.getFace().equals(Face.E))){
 			throw new InvariantError("le Mob n'a pas strafeR");
 		}
 
 		if( dir.equals(Face.E) &&
-				( ((! this.getEnv().getCellNature(row+1 , col).equals(Cell.EMP) && ! this.getEnv().getCellNature(row+1 , col).equals(Cell.DNO)) || 
-						row+1 >= this.getEnv().getHeight() ||
-						! this.getEnv().getCellContent(row+1, col).equals(OptionEnum.No)) &&
+				( ! serv.getEnv().getCells()[row+1][col].getNature().equals(Cell.EMP) &&
+						! serv.getEnv().getCells()[row+1][col].getNature().equals(Cell.DNO)) || 
+				row+1 >= serv.getEnv().getHeight() ||
+				! serv.getEnv().getCells()[row+1][col].getContent().equals(OptionEnum.No) &&
 
-						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.E))) ){
-			throw new InvariantError("Le Mob n'est pas en bonne position");
-		}
+				(serv.getRow() != row || serv.getCol() != col || ! serv.getFace().equals(Face.E))){
+					throw new InvariantError("Le Mob n'est pas en bonne position");
+				}
 
 
-		/*****W*******/
-		if( dir.equals(Face.W) &&
-				((this.getEnv().getCellNature(row-1 , col).equals(Cell.EMP)||this.getEnv().getCellNature(row-1 , col).equals(Cell.DNO)) &&
-						row-1 >= 0 &&
-						this.getEnv().getCellContent(row-1, col).equals(OptionEnum.No)) &&
+				/*****W*******/
+				if( dir.equals(Face.W) &&
+						((serv.getEnv().getCells()[row-1][col].getNature().equals(Cell.EMP)||
+								serv.getEnv().getCells()[row-1][col].getNature().equals(Cell.DNO)) &&
+								row-1 >= 0 &&
+								serv.getEnv().getCells()[row-1][col].getContent().equals(OptionEnum.No)) &&
 
-				(this.getRow() != row-1 || this.getCol() != col || ! this.getFace().equals(Face.W))){
-			throw new InvariantError("le Mob n'a pas strafeR");
-		}
+						(serv.getRow() != row-1 || serv.getCol() != col || ! serv.getFace().equals(Face.W))){
+					throw new InvariantError("le Mob n'a pas strafeR");
+				}
 
-		if( dir.equals(Face.W) &&
-				( ((! this.getEnv().getCellNature(row-1 , col).equals(Cell.EMP) && ! this.getEnv().getCellNature(row-1 , col).equals(Cell.DNO)) || 
-						row-1 < 0 ||
-						! this.getEnv().getCellContent(row-1, col).equals(OptionEnum.No)) &&
+				if( dir.equals(Face.W) &&
+						( ((! serv.getEnv().getCells()[row-1][col].getNature().equals(Cell.EMP) &&
+								! serv.getEnv().getCells()[row-1][col].getNature().equals(Cell.DNO)) || 
+								row-1 < 0 ||
+								! serv.getEnv().getCells()[row-1][col].getContent().equals(OptionEnum.No)) &&
 
-						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.W))) ){
-			throw new InvariantError("Le Mob n'est pas en bonne position");
-		}
-		checkInvariant();
+								(serv.getRow() != row || serv.getCol() != col || ! serv.getFace().equals(Face.W))) ){
+					throw new InvariantError("Le Mob n'est pas en bonne position");
+				}
+				checkInvariant();
 	}
 }

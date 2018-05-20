@@ -1,14 +1,13 @@
 package decorators;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import implm.CelluleImplem;
+import servives.ClefService;
 import servives.EntityService;
 import servives.EnvironnementService;
-import servives.MobService;
+import servives.TresorService;
 import tools.Cell;
-import tools.Cellule;
-import tools.Option;
 import tools.OptionEnum;
 
 public class EnvironnementDecorator implements EnvironnementService {
@@ -19,10 +18,7 @@ public class EnvironnementDecorator implements EnvironnementService {
 
 	EnvironnementService serv ;
 
-	@Override
-	public OptionEnum getCellContent(int col, int row) {
-		return serv.getCellContent(col, row);
-	}
+	
 
 	@Override
 	public int getHeight() {
@@ -44,10 +40,6 @@ public class EnvironnementDecorator implements EnvironnementService {
 		serv.setWidth(w);
 	}
 
-	@Override
-	public Cell getCellNature(int i, int j) {
-		return serv.getCellNature(i, j);
-	}
 
 	@Override
 	public void OpenDoor(int i, int j) {
@@ -64,25 +56,19 @@ public class EnvironnementDecorator implements EnvironnementService {
 		serv.init(height, width);
 	}
 
-	@Override
-	public Cellule getCell(int i, int j) {
-		return serv.getCell(i, j);
-	}
 
 	@Override
-	public Cellule[][] getCells() {
+	public CelluleImplem[][] getCells() {
 		return serv.getCells();
 	}
 
 	@Override
-	public void setCells(Cellule[][] cells) {
+	public void setCells(CelluleImplem[][] cells) {
 		serv.setCells(cells);
 	}
 
-
-
 	@Override
-	public Cellule getTresor() {
+	public TresorService getTresor() {
 		return serv.getTresor();
 	}
 
@@ -101,8 +87,14 @@ public class EnvironnementDecorator implements EnvironnementService {
 		return serv.YaUnMob(i, j);
 	}
 
+
 	@Override
-	public boolean isReachable(Cellule depart, Cellule arrivé, List<Cellule> dejaVisites) {
-		return serv.isReachable(depart, arrivé, dejaVisites);
+	public ClefService getClef() {
+		return serv.getClef();
+	}
+
+	@Override
+	public boolean isReachable(int x1, int y1, int x2, int y2) {
+		return serv.isReachable(x1, y1, x2, y2);
 	}
 }

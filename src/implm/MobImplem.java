@@ -8,7 +8,6 @@ import tools.Face;
 
 public class MobImplem implements MobService {
 	public MobImplem() {
-		
 	}
 
 
@@ -16,8 +15,6 @@ public class MobImplem implements MobService {
 	protected Face face;
 	protected EnvironnementService env ;
 	protected boolean tresorFound = false;
-	protected int NbClefs = 0;
-
 
 	@Override
 	public void init(int row, int col, Face face , EnvironnementService env) {
@@ -29,7 +26,6 @@ public class MobImplem implements MobService {
 		if( col < 0 || col > this.env.getWidth() || row < 0 || row > this.env.getHeight() ) {
 			System.out.println(" le Mob ne peut être initialisé ! ses coordonnées dépassent les dimentions de l'env ");
 		}else {
-			System.out.println("heeeeeeeeeeeeeeeeeeere : "+this.getEnv());
 			this.env.getEntities().add((EntityService) this);
 		}
 	}
@@ -251,11 +247,6 @@ public class MobImplem implements MobService {
 		return this.row;
 	}
 
-	@Override
-	public Face getDir() {
-		return this.face;
-	}
-
 	public Face getFace() {
 		return face;
 	}
@@ -268,23 +259,10 @@ public class MobImplem implements MobService {
 		this.row = row;
 	}
 
-
-
-
-
 	@Override
 	public boolean getTresorFound() {
 		return this.tresorFound;
 	}
 
-	@Override
-	public int getNbClefs() {
-		return NbClefs;
-	}
-
-	@Override
-	public void setNbClefs(int nb) {
-		this.NbClefs = nb;
-	}
 
 }

@@ -27,7 +27,7 @@ public interface MobService {
 	 * 
 	 * 
 	 */
-	public Face getDir();
+	public Face getFace();
 	/*
 	 * 
 	 * 
@@ -65,9 +65,7 @@ public interface MobService {
 	public void strafeR();
 	
 	public boolean getTresorFound();
-	public int getNbClefs();
 	public void setFace(Face face);
 	public void setRow(int row);
-	void setNbClefs(int nb);
 
 }

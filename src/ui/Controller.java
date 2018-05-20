@@ -24,7 +24,8 @@ import servives.CowService;
 import servives.EntityService;
 import servives.EnvironnementService;
 import tools.Cell;
-import tools.Cellule;
+import implm.CelluleImplem;
+import tools.Commande;
 import tools.Face;
 import tools.OptionEnum;
 import tools.OptionFood;
@@ -32,7 +33,7 @@ import tools.OptionFood;
 public class Controller extends Application {
 	Rectangle[][] cases;
 	StackPane[][] stacks;
-	Cellule[][] cells;
+	CelluleImplem[][] cells;
 	EnvironnementService env;
 	PlayerImplem player;
 	EngineImplem moteurJeuImplem;
@@ -70,10 +71,8 @@ public class Controller extends Application {
 		cells = moteurJeuImplem.getEnvi().getCells();
 		player = (PlayerImplem) env.getEntities().get(0);
 
-
 		cases = new Rectangle[100][100];
 		stacks = new StackPane[100][100];
-
 
 		primaryStage.setTitle("Dungeon Master");
 		BorderPane borderPaneRoot = new BorderPane();
@@ -87,7 +86,7 @@ public class Controller extends Application {
 		labelGagne = new Label("");
 
 		/*****/
-		force =  new Label("3");
+		force =  new Label(Integer.toString(player.getHp()));
 		cleflabel= new Label("0");
 
 		/*****/
@@ -163,7 +162,7 @@ public class Controller extends Application {
 
 					tilePane.getChildren().add(stacks[i][j]); 
 
-					if(i == env.getTresor().getI() && j == env.getTresor().getJ())
+					if( i == env.getTresor().getI() && j == env.getTresor().getJ() )
 					{
 						ImageView t = new ImageView(tresor);
 						t.setFitWidth(tailleCase);
@@ -171,7 +170,7 @@ public class Controller extends Application {
 
 						stacks[i][j].getChildren().add(t); 
 					}
-					if(cells[i][j].getClef())
+					if(i == env.getClef().getI() && j == env.getClef().getJ())
 					{
 						ImageView cl = new ImageView(clef);
 						cl.setFitWidth(tailleCase-40);
@@ -264,12 +263,13 @@ public class Controller extends Application {
 
 
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			Rectangle caseCourante ;
+			Rectangle caseCourante;
 			Rectangle caseSuivante;
-			Cellule cellCourante;
-			Cellule cellSvte;
-			StackPane stacksCourante = stacks[player.getRow()][player.getCol()];
 			StackPane stacksSvte;
+			CelluleImplem cellCourante;
+			CelluleImplem cellSvte;
+			StackPane stacksCourante = stacks[player.getRow()][player.getCol()];
+			
 
 			@Override
 			public void handle(KeyEvent event) {
@@ -279,78 +279,67 @@ public class Controller extends Application {
 				stacksCourante = stacks[player.getRow()][player.getCol()];
 
 				if( event.getCode().equals(KeyCode.UP)) {
-					
-					if( ! cells[player.getRow()][player.getCol()].getNature().equals(Cell.OUT)) {
-						player.forward();
-						System.out.println("up");
-						stacksSvte = stacks[player.getRow()][player.getCol()];
-						cellSvte = cells[player.getRow()][player.getCol()];
-						caseSuivante = cases[player.getRow()][player.getCol()];
-						if( cellCourante.getI() == cellSvte.getI() && cellCourante.getJ() == cellSvte.getJ())  {
-							System.out.println("impossible d'avancer");
+					player.setLastCommande(Commande.FF);
+				}else {
+					if( event.getCode().equals(KeyCode.DOWN)) {
+						player.setLastCommande(Commande.BB);
+					}else {
+						if( event.getCode().equals(KeyCode.RIGHT)) {
+							player.setLastCommande(Commande.RR);
 						}else {
-							changements(cellCourante.getI(),cellCourante.getJ(),cellSvte.getI(),cellSvte.getJ());
+
+							if( event.getCode().equals(KeyCode.LEFT)) {
+								player.setLastCommande(Commande.LL);
+							}else {
+
+								if( event.getCode().equals(KeyCode.CONTROL)) {
+									player.setLastCommande(Commande.TL);
+								}else {
+
+									if( event.getCode().equals(KeyCode.ALT)) {
+										player.setLastCommande(Commande.TR);
+									}else {
+										player.setLastCommande(Commande.NO);
+									}
+								}
+							}
 						}
 					}
 				}
 
-				if( event.getCode().equals(KeyCode.DOWN)) {
-					if( !cells[player.getRow()][player.getCol()].getNature().equals(Cell.OUT)) {
-						player.backward();
+				if( player.getLastCommande().equals(Commande.FF) || player.getLastCommande().equals(Commande.BB)||
+						player.getLastCommande().equals(Commande.LL) || player.getLastCommande().equals(Commande.RR)) {
+					player.step();
 
-						stacksSvte = stacks[player.getRow()][player.getCol()];
-						cellSvte = cells[player.getRow()][player.getCol()];
-						caseSuivante = cases[player.getRow()][player.getCol()];
+					stacksSvte = stacks[player.getRow()][player.getCol()];
+					cellSvte = cells[player.getRow()][player.getCol()];
+					caseSuivante = cases[player.getRow()][player.getCol()];
 
-						if( cellCourante.getI() == cellSvte.getI() && cellCourante.getJ() == cellSvte.getJ())  {
-						}else {
+					if( cellSvte.getNature().equals(Cell.DNC) || cellSvte.getNature().equals(Cell.DWC)) {
+						if( player.getClefFound()) {
 							changements(cellCourante.getI(),cellCourante.getJ(),cellSvte.getI(),cellSvte.getJ());
+							player.setLastCommande(null);
+						}else {
+							
+						}
+					}else {
+						changements(cellCourante.getI(),cellCourante.getJ(),cellSvte.getI(),cellSvte.getJ());
+						player.setLastCommande(null);
+					}
+				}else {
+					if(player.getLastCommande().equals(Commande.TL) ) {
+						turnLchangements(player.getFace());
+						player.setLastCommande(null);
+					}else {
+						if(player.getLastCommande().equals(Commande.TR)) {
+							turnRchangements(player.getFace());
+							player.setLastCommande(null);
+						}else {
+							//le player a frapper dans le vide--> ça n'apporte aucun changement 
 						}
 					}
 				}
 
-				if( event.getCode().equals(KeyCode.RIGHT)) {
-					if(  !cells[player.getRow()][player.getCol()].getNature().equals(Cell.OUT)) {
-
-						player.strafeR();
-
-						stacksSvte = stacks[player.getRow()][player.getCol()];
-						cellSvte = cells[player.getRow()][player.getCol()];
-						caseSuivante = cases[player.getRow()][player.getCol()];
-
-						if( cellCourante.getI() == cellSvte.getI() && cellCourante.getJ() == cellSvte.getJ())  {
-						}else {
-							changements(cellCourante.getI(),cellCourante.getJ(),cellSvte.getI(),cellSvte.getJ());
-						}
-					}
-				}
-
-				if( event.getCode().equals(KeyCode.LEFT)) {
-
-					if( ! cells[player.getRow()][player.getCol()].getNature().equals(Cell.OUT)) {
-						player.strafeL();
-						stacksSvte = stacks[player.getRow()][player.getCol()];
-						caseSuivante = cases[player.getRow()][player.getCol()];
-						cellSvte = cells[player.getRow()][player.getCol()];
-
-						if( cellCourante.getI() == cellSvte.getI() && cellCourante.getJ() == cellSvte.getJ())  {
-						}else {
-							changements(cellCourante.getI(),cellCourante.getJ(),cellSvte.getI(),cellSvte.getJ());
-						}
-					}
-				}
-
-				if( event.getCode().equals(KeyCode.CONTROL)) {
-					turnLchangements(player.getFace());
-				}
-
-				if( event.getCode().equals(KeyCode.ALT)) {
-					turnRchangements(player.getFace());
-				}
-
-				//				if( event.getCode().equals(KeyCode.ENTER)) {
-				//					System.out.println("ENTER");
-				//				}
 				for( EntityService c : env.getEntities() ) {
 					if( c instanceof CowService ) 
 						if( c.isEnVie() ){
@@ -377,12 +366,12 @@ public class Controller extends Application {
 									}
 								}
 								if( c != null )
-								if( ((CowService) c).getFrappe() ) {
-									moteurJeuImplem.getCombat().VachefrappePlayer();
-									((CowService) c).setFrappe(false);
+									if( ((CowService) c).getFrappe() ) {
+										moteurJeuImplem.getCombat().VachefrappePlayer();
+										((CowService) c).setFrappe(false);
 
-									System.out.println("le monstre a frappé");
-								}
+										System.out.println("le monstre a frappé");
+									}
 							}
 							System.out.println("proche ? : "+combat.proche(player, c));
 							if(combat.proche(player,c) ) {
@@ -393,13 +382,14 @@ public class Controller extends Application {
 									changementsEnter(c);
 								}
 							}
-
 							System.out.println("le monstre est en vie ?"+c.isEnVie());
-
 						}
 				}
+				force.setText( Integer.toString(player.getHp()) );
+				if( player.getClefFound())
+					cleflabel.setText( "1" );
 			}
-			
+
 			public void changementsEnter(EntityService c) {
 				moteurJeuImplem.getCombat().PlayerfrappeMonstre();
 				if(  c.isEnVie() == false ) {
@@ -428,8 +418,8 @@ public class Controller extends Application {
 							}
 						}
 					}
+					player.turnR();
 				}
-				player.turnR();
 			}
 
 			private void turnLchangements(Face face) {
@@ -449,7 +439,6 @@ public class Controller extends Application {
 						}
 					}
 				}
-
 				player.turnL();
 			}
 
@@ -490,15 +479,14 @@ public class Controller extends Application {
 		po.setFitHeight(tailleCase);
 
 		StackPane stacksCourante = stacks[iAvant][jAvant], stacksSvte= stacks[iApres][jApres];
-		Cellule cellCourante = cells[iAvant][jAvant],cellSvte= cells[iApres][jApres];
+		CelluleImplem cellCourante = cells[iAvant][jAvant],cellSvte= cells[iApres][jApres];
 		System.out.println("yaunmob cellsvte"+cellSvte.getContent());
 		if( ! cellSvte.getNature().equals(Cell.WLL) && ! env.YaUnMob(cellSvte.getI(), cellSvte.getJ())) {
 
 			if( cellCourante.getNature().equals(Cell.EMP) && cellSvte.getNature().equals(Cell.EMP)) {
-				
-				if(cells[cellSvte.getI()][cellSvte.getJ()].getClef()){//si y a une clé la manger 
+
+				if(env.getClef().getI()==iApres && env.getClef().getJ()==jApres){//si y a une clé la manger 
 					stacksSvte.getChildren().remove(stacksSvte.getChildren().size()-1);
-					cellSvte.setClef(false);
 				}
 				if( iApres == env.getTresor().getI() && jApres == env.getTresor().getJ() ) {
 					stacksSvte.getChildren().remove(stacksSvte.getChildren().size()-1);
@@ -508,8 +496,8 @@ public class Controller extends Application {
 					stacksSvte.getChildren().remove(stacksCourante.getChildren().size()-1);
 					player.setHp(player.getHp() + 1);
 				}
-				
-				
+
+
 				Node p = stacksCourante.getChildren().remove(stacksCourante.getChildren().size()-1);// le player
 				stacksSvte.getChildren().add(p);
 			}else {
@@ -535,10 +523,6 @@ public class Controller extends Application {
 					}else {
 						if( (cellCourante.getNature().equals(Cell.DNO)||cellCourante.getNature().equals(Cell.DWO)||
 								cellCourante.getNature().equals(Cell.IN)) && cellSvte.getNature().equals(Cell.EMP)) {
-							if(cells[cellSvte.getI()][cellSvte.getJ()].getClef()){//si y a une clé la manger 
-								stacksSvte.getChildren().remove(stacksSvte.getChildren().size()-1);
-								cellSvte.setClef(false);
-							}
 							if( iApres == env.getTresor().getI() && jApres == env.getTresor().getJ() ) {
 								stacksSvte.getChildren().remove(stacksSvte.getChildren().size()-1);
 							}
@@ -550,22 +534,27 @@ public class Controller extends Application {
 									cellSvte.getNature().equals(Cell.IN ) ||( cellSvte.getNature().equals(Cell.DWO) ))) {
 								Node p = stacksCourante.getChildren().remove(stacksCourante.getChildren().size()-1);//supp le joueur
 								stacksSvte.getChildren().add(p);//add le joueur
+							}else {
+								if( cellSvte.getNature().equals(Cell.OUT)) {
+									Sortie(stacksCourante,stacksSvte);
+								}
 							}
 						}
 					}
 				}
 			}
 
-			if( cellCourante.getNature().equals(Cell.EMP) && cellSvte.getNature().equals(Cell.OUT)) {
-				Node p = stacksCourante.getChildren().remove(stacksCourante.getChildren().size()-1);//supp le joueur
-				stacksSvte.getChildren().add(p);//add le joueur
-				if(player.getTresorFound()) {
-					labelGagne.setText("Gagné :) ");
-				}else {
-					labelGagne.setText("Perdu :( ");
-				}
-
-			}
 		}
 	}
+
+	public void Sortie(StackPane stacksCourante, StackPane stacksSvte) {
+		Node p = stacksCourante.getChildren().remove(stacksCourante.getChildren().size()-1);//supp le joueur
+		stacksSvte.getChildren().add(p);//add le joueur
+		if(player.getTresorFound()) {
+			labelGagne.setText("Gagné :) ");
+		}else {
+			labelGagne.setText("Perdu :( ");
+		}
+	}
+
 }

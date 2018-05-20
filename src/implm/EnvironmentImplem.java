@@ -3,10 +3,13 @@ package implm;
 import java.util.ArrayList;
 import java.util.List;
 
+import servives.ClefService;
 import servives.EntityService;
 import servives.EnvironnementService;
+import servives.PlayerService;
+import servives.TresorService;
 import tools.Cell;
-import tools.Cellule;
+import implm.CelluleImplem;
 import tools.Face;
 import tools.OptionEnum;
 import tools.OptionFood;
@@ -16,29 +19,32 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 	public EnvironmentImplem() {
 	}
 
-	public int height ;
-	public int width ;
-	public Cellule[][] cells ;
+	protected int height ;
+	protected int width ;
+	protected CelluleImplem[][] cells ;
 	
-	private List<EntityService> entities;	
-	public Cellule clef;
-	public Cellule tresor ;
+	protected List<EntityService> entities;	
+	protected TresorService tresor;
+	protected ClefService clef;
 
-	public Cellule getCell(int i, int j) {
+	public CelluleImplem getCell(int i, int j) {
 		return this.cells[i][j];
 	}
+	
 	public Cell getCellNature(int i, int j) {
 		return cells[i][j].getNature();
 	}
 
+	@Override
 	public void OpenDoor(int i, int j) {
 		if( this.cells[i][j].getNature().equals(Cell.DNC )){
+			if( ! ((PlayerService) entities.get(0)).getClefFound() )
+				System.out.println("you have not the key ");
+			
 			this.cells[i][j].setNature(Cell.DNO);
-			this.cells[i][j].setNaturePrec(Cell.DNO);
 		} else {
 			if( cells[i][j].getNature().equals(Cell.DWC) ){
 				cells[i][j].setNature(Cell.DWO);
-				cells[i][j].setNaturePrec(Cell.DWO);
 			}else{
 				System.out.println(" ce n'est pas une porte -_- ");
 			}
@@ -46,16 +52,15 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 	}
 
 	//modification
+	@Override
 	public void CloseDoor(int i, int j) {
-		if(  getCellContent(i, j).equals(OptionEnum.No) ) {
+		if(  this.cells[i][j].getContent().equals(OptionEnum.No) ) {
 
 			if( getCell(i, j).getNature() == Cell.DNO ){
 				getCell(i, j).setNature(Cell.DNC);
-				getCell(i, j).setNaturePrec(Cell.DNC);
 			}else{
 				if( getCell(i, j).getNature() == Cell.DWO ){
 					getCell(i, j).setNature(Cell.DWC);
-					getCell(i, j).setNaturePrec(Cell.DWC);
 				}else{
 					System.out.println(" ce n'est pas une porte -_-");
 				}
@@ -64,6 +69,7 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 			System.out.println("cette porte ne peut pas être fermée ! il y a un Mob sur place");
 		}
 	}
+	
 	@Override
 	public boolean YaUnMob(int i , int j ) {
 		for ( int l = 1 ; l < this.getEntities().size() ; l++ ) {
@@ -78,12 +84,12 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 	public void init( int height, int width) {
 		this.height = height;
 		this.width = width;
-		this.cells = new Cellule[100][100];
+		this.cells = new CelluleImplem[100][100];
 		this.entities = new ArrayList<EntityService>();
 
 		int random ;
 
-		this.cells[height-1][width-2] = new Cellule();
+		this.cells[height-1][width-2] = new CelluleImplem();
 		this.cells[height-1][width-2].init(height-1, width-2, Cell.EMP);
 		this.cells[height-1][width-2].setContent(OptionEnum.So);
 		PlayerImplem player =new PlayerImplem();
@@ -96,32 +102,32 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 					continue;
 				}
 				if( i ==0 && j == 0 ) {
-					this.cells[i][j] = new Cellule();
+					this.cells[i][j] = new CelluleImplem();
 					this.cells[i][j].init( i, j , Cell.OUT);
 					this.cells[i][j].setContent(OptionEnum.No);
 					continue;
 				}
 
 				if( i ==height-1 && j == width-1 ) {
-					this.cells[i][j] = new Cellule();
+					this.cells[i][j] = new CelluleImplem();
 					this.cells[i][j].init(i, j, Cell.IN);
 					this.cells[i][j].setContent(OptionEnum.No);
 					continue;
 				}
 				if(i<2 && j<2) {
-					this.cells[i][j] = new Cellule();
+					this.cells[i][j] = new CelluleImplem();
 					this.cells[i][j].init(i, j,Cell.EMP);
 					this.cells[i][j].setContent(OptionEnum.No);
 					continue;
 				}
 				if(i>height-3 && j>width-3) {
-					this.cells[i][j] = new Cellule();
+					this.cells[i][j] = new CelluleImplem();
 					this.cells[i][j].init( i, j , Cell.EMP);
 					this.cells[i][j].setContent(OptionEnum.No);
 					continue;
 				}
 				if(i==height-1 || j==width-1 || i==0 || j==0) {
-					this.cells[i][j] = new Cellule( );
+					this.cells[i][j] = new CelluleImplem( );
 					this.cells[i][j].init(i, j , Cell.WLL);
 					this.cells[i][j].setContent(OptionEnum.No);
 					continue;
@@ -132,20 +138,20 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 				case 1 :
 					if(contient (i+1,j,Cell.WLL) && contient(i,j-1,Cell.EMP))
 					{
-						this.cells[i][j] = new Cellule();
+						this.cells[i][j] = new CelluleImplem();
 						this.cells[i][j].init(i,j,Cell.DWO);
 						this.cells[i][j].setContent(OptionEnum.No);
 
-						this.cells[i][j+1] = new Cellule();
+						this.cells[i][j+1] = new CelluleImplem();
 						this.cells[i][j+1].init(i,j+1,Cell.EMP);
 						this.cells[i][j+1].setContent(OptionEnum.No);
 
-						this.cells[i+1][j] = new Cellule();
+						this.cells[i+1][j] = new CelluleImplem();
 						this.cells[i+1][j].init(i+1,j,Cell.WLL);
 						this.cells[i+1][j].setContent(OptionEnum.No);
 						continue;
 					}else {
-						this.cells[i][j] = new Cellule();
+						this.cells[i][j] = new CelluleImplem();
 						this.cells[i][j].init( i, j , Cell.EMP);
 						this.cells[i][j].setContent(OptionEnum.No);
 						continue;
@@ -154,21 +160,21 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 				case 2 :
 					if( contient (i-1, j,Cell.WLL) && contient(i, j-1, Cell.EMP) )
 					{
-						this.cells[i][j] = new Cellule();
+						this.cells[i][j] = new CelluleImplem();
 						this.cells[i][j].init( i, j , Cell.DWC);
 						this.cells[i][j].setContent(OptionEnum.No);
 
-						this.cells[i][j+1] = new Cellule();
+						this.cells[i][j+1] = new CelluleImplem();
 						this.cells[i][j+1].init( i, j+1 , Cell.EMP);
 						this.cells[i][j+1].setContent(OptionEnum.No);
 
-						this.cells[i+1][j] = new Cellule();	
+						this.cells[i+1][j] = new CelluleImplem();	
 						this.cells[i+1][j].init( i+1, j , Cell.WLL);
 						this.cells[i+1][j].setContent(OptionEnum.No);
 
 						continue;
 					}else {
-						this.cells[i][j] = new Cellule();
+						this.cells[i][j] = new CelluleImplem();
 						this.cells[i][j].init( i, j , Cell.EMP);
 						this.cells[i][j].setContent(OptionEnum.No);
 						continue;
@@ -177,15 +183,15 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 				case 3 :
 					if( contient (i-1, j,Cell.EMP) && contient(i, j-1, Cell.WLL) )
 					{
-						this.cells[i][j] = new Cellule();
+						this.cells[i][j] = new CelluleImplem();
 						this.cells[i][j] .init( i, j , Cell.DNC);
 						this.cells[i][j].setContent(OptionEnum.No);
 
-						this.cells[i][j+1] = new Cellule();
+						this.cells[i][j+1] = new CelluleImplem();
 						this.cells[i][j+1].init( i, j+1 , Cell.WLL);
 						this.cells[i][j+1].setContent(OptionEnum.No);
 
-						this.cells[i+1][j] = new Cellule( );
+						this.cells[i+1][j] = new CelluleImplem( );
 						this.cells[i+1][j].init(i+1, j , Cell.EMP);
 						this.cells[i+1][j].setContent(OptionEnum.No);
 
@@ -193,7 +199,7 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 						this.cells[i-1][j].setNbClefCell(this.cells[i-1][j].getNbClefCell()+1);*/
 						continue;
 					}else {
-						this.cells[i][j] = new Cellule();
+						this.cells[i][j] = new CelluleImplem();
 						this.cells[i][j].init( i, j , Cell.WLL);
 						this.cells[i][j].setContent(OptionEnum.No);
 						continue;
@@ -202,21 +208,21 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 				case 4 :
 					if( contient (i-1, j,Cell.EMP) && contient(i, j-1, Cell.WLL) )
 					{
-						this.cells[i][j] = new Cellule();
+						this.cells[i][j] = new CelluleImplem();
 						this.cells[i][j].init( i, j , Cell.DNO);
 						this.cells[i][j].setContent(OptionEnum.No);
 
-						this.cells[i][j+1] = new Cellule();
+						this.cells[i][j+1] = new CelluleImplem();
 						this.cells[i][j+1].init( i, j+1 , Cell.WLL);
 						this.cells[i][j+1].setContent(OptionEnum.No);
 
-						this.cells[i+1][j] = new Cellule();
+						this.cells[i+1][j] = new CelluleImplem();
 						this.cells[i+1][j].init( i+1, j , Cell.EMP);
 						this.cells[i+1][j].setContent(OptionEnum.No);
 
 						continue;
 					}else {
-						this.cells[i][j] = new Cellule();
+						this.cells[i][j] = new CelluleImplem();
 						this.cells[i][j].init( i, j , Cell.WLL);
 						this.cells[i][j].setContent(OptionEnum.No);
 						continue;
@@ -226,25 +232,27 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 
 		int x,y;
 
-		while( tresor == null ) {
+		while( this.tresor == null ) {
 			x = 1 + (int)(Math.random() * this.height-1);
 			y = 2 + (int)(Math.random() * this.width-2 );
-			List<Cellule> dejaVisites = new ArrayList<Cellule>();
 			if(this.cells[x][y].getNature().equals(Cell.EMP) && x!= 9 && y!= 8 &&
-					this.isReachable(cells[height-1][width-1], this.cells[x][y], dejaVisites )) {
-				tresor = this.cells[x][y];
+					this.isReachable(height-1, width-1, x, y )) {
+				tresor = new TresorIplem();
+				tresor.init(this,x, y);
 				this.cells[x][y].setContent(OptionEnum.No);
 			}
 		}
-		while( clef == null ) {
+		
+		while( this.clef == null ) {
 			x = 1 + (int)(Math.random() * this.height-1);
 			y = 2 + (int)(Math.random() * this.width-2 );
-			List<Cellule> dejaVisites = new ArrayList<Cellule>();
+			List<CelluleImplem> dejaVisites = new ArrayList<CelluleImplem>();
 			if(this.cells[x][y].getNature().equals(Cell.EMP) && x!= 9 && y!= 8 &&
-					this.isReachable(cells[height-1][width-1], this.cells[x][y], dejaVisites )) {
-				clef = this.cells[x][y];
+					x!= tresor.getI() && y!= tresor.getJ() && 
+					this.isReachable_EMP_DNO(cells[height-1][width-1], this.cells[x][y], dejaVisites )) {
+				this.clef = new ClefImplem();
+				this.clef.init(this, x, y);
 				this.cells[x][y].setContent(OptionEnum.No);
-				this.cells[x][y].setClef(true);
 			}
 		}
 		
@@ -252,8 +260,8 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 		while( this.getEntities().size() < 2 ) {
 			x = 1 + (int)(Math.random() * this.height-1);
 			y = 2 + (int)(Math.random() * this.width-2);
-			if( this.cells[x][y].getNature().equals(Cell.EMP) && this.getCellContent(x, y).equals(OptionEnum.No) &&
-					! this.cells[x][y].equals(tresor)) {
+			if( this.cells[x][y].getNature().equals(Cell.EMP) && this.getCells()[x][y].getContent().equals(OptionEnum.No) &&
+					x!= tresor.getI() && y!= tresor.getJ() && x!= clef.getI() && y!= clef.getJ()) {
 				int NbPoint = 3;
 				CowImplem c = new CowImplem();
 				c.init(x, y, NbPoint, Face.N, this);
@@ -262,12 +270,11 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 				System.out.println("le monstre est dans la position : x="+x+"y = "+y);
 			}
 		}
+		List<CelluleImplem> deja = new ArrayList<CelluleImplem>();
+		System.out.println("accessible : "+isReachable_EMP_DNO(cells[9][9], cells[0][0], deja));
 	}
 
-	@Override
-	public Cellule getTresor() {
-		return this.tresor;
-	}
+	
 
 	private boolean contient(int i,int j,Cell c) {
 		if( cells[i][j] != null )
@@ -278,11 +285,11 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 
 
 	@Override
-	public Cellule[][] getCells() {
+	public CelluleImplem[][] getCells() {
 		return this.cells;
 	}
 	@Override
-	public void setCells(Cellule[][] cells) {
+	public void setCells(CelluleImplem[][] cells) {
 		this.cells = cells;
 	}
 	@Override
@@ -304,28 +311,15 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 		return this.width;
 	}
 
-	@Override
-	public OptionEnum getCellContent(int row, int col ) {
-		return this.cells[row][col].getContent();
-	}
 
 
-	public List<Cellule> casesPossibles(Cellule c){
-		List<Cellule> res = new ArrayList<Cellule>();
-		if(c.getI()-1>=0 )
-			res.add(cells[c.getI()-1][c.getJ()]);
-		if(c.getJ()-1>=0)
-			res.add(cells[c.getI()][c.getJ()-1]);
-		if(c.getI()+1<height)
-			res.add(cells[c.getI()+1][c.getJ()]);
-		if(c.getJ()+1<width)
-			res.add(cells[c.getI()][c.getJ()+1]);
-		return res;
-	}
-	@Override
-	public boolean isReachable(Cellule depart, Cellule arrivé, List<Cellule> dejaVisites) {
+	
+	
+	
 
-		if(depart.getNature().equals(Cell.WLL))
+	public boolean isReachable_EMP_DNO(CelluleImplem depart, CelluleImplem arrivé, List<CelluleImplem> dejaVisites) {
+
+		if( depart.getNature().equals(Cell.WLL) || depart.getNature().equals(Cell.DNC) )
 			return false;
 
 		if(depart.equals(arrivé))
@@ -333,15 +327,14 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 
 		boolean res = false;
 		dejaVisites.add(depart);
-		for(Cellule next : casesPossibles(depart)) { 
-			List<Cellule> l = new ArrayList<>();
+		for(CelluleImplem next : casesPossibles(depart)) { 
+			List<CelluleImplem> l = new ArrayList<>();
 			l.addAll(dejaVisites);
 			if(!dejaVisites.contains(next))
-				res = res || isReachable(next, arrivé, l);
+				res = res || isReachable_EMP_DNO(next, arrivé, l);
 		}
 		return res; 
 	}
-
 
 	@Override
 	public List<EntityService> getEntities() {
@@ -351,6 +344,52 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 	@Override
 	public void setEntities(List<EntityService> en) {
 		this.entities = en;
+	}
+	@Override
+	public TresorService getTresor() {
+		return this.tresor;
+	}
+	@Override
+	public ClefService getClef() {
+		return this.clef;
+	}
+
+	@Override
+	public boolean isReachable(int x1, int y1, int x2, int y2) {
+		List<CelluleImplem> dejaVisites = new ArrayList<CelluleImplem>();
+		return isReachableBis(cells[x1][y1], cells[x2][y2], dejaVisites);
+	}
+	
+	public boolean isReachableBis(CelluleImplem depart, CelluleImplem arrivé, List<CelluleImplem> dejaVisites) {
+
+		if(depart.getNature().equals(Cell.WLL))
+			return false;
+
+		if(depart.equals(arrivé))
+			return true;
+
+		boolean res = false;
+		dejaVisites.add(depart);
+		for(CelluleImplem next : casesPossibles(depart)) { 
+			List<CelluleImplem> l = new ArrayList<>();
+			l.addAll(dejaVisites);
+			if(!dejaVisites.contains(next))
+				res = res || isReachableBis(next, arrivé, l);
+		}
+		return res; 
+	}
+	
+	public List<CelluleImplem> casesPossibles(CelluleImplem c){
+		List<CelluleImplem> res = new ArrayList<CelluleImplem>();
+		if(c.getI()-1>=0 )
+			res.add(cells[c.getI()-1][c.getJ()]);
+		if(c.getJ()-1>=0)
+			res.add(cells[c.getI()][c.getJ()-1]);
+		if(c.getI()+1<height)
+			res.add(cells[c.getI()+1][c.getJ()]);
+		if(c.getJ()+1<width)
+			res.add(cells[c.getI()][c.getJ()+1]);
+		return res;
 	}
 
 }

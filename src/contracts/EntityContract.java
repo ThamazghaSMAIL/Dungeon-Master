@@ -24,9 +24,9 @@ public class EntityContract extends EntityDecorator implements EntityService{
 
 		//Environment::CellNature(Envi(M),Col(M),Row(M)) ∈ {WLL, DNC, DWC}
 
-		if( (this.getEnv().getCellNature(this.getRow(), this.getCol())).equals(Cell.WLL) || 
-				(this.getEnv().getCellNature(this.getRow(), this.getCol())).equals(Cell.DNC) ||
-				(this.getEnv().getCellNature(this.getRow(), this.getCol())).equals(Cell.DWC)) {
+		if(this.getEnv().getCells()[this.getRow()][this.getCol()].getNature().equals(Cell.WLL) || 
+				(this.getEnv().getCells()[this.getRow()][this.getCol()]).getNature().equals(Cell.DNC) ||
+				(this.getEnv().getCells()[this.getRow()][this.getCol()]).getNature().equals(Cell.DWC)) {
 			throw new InvariantError("le Mob ne peut être sur un WLL/DNC/DWC");
 		}
 		
@@ -72,18 +72,20 @@ public class EntityContract extends EntityDecorator implements EntityService{
 
 		/*****N*******/
 		if( dir.equals(Face.N) &&
-				((this.getEnv().getCellNature(row+1 , col).equals(Cell.EMP)||this.getEnv().getCellNature(row+1 , col).equals(Cell.DNO)) &&
+				((this.getEnv().getCells()[row+1][ col].getNature().equals(Cell.EMP)||
+						this.getEnv().getCells()[row+1][ col].getNature().equals(Cell.DNO)) &&
 						row+1 <this.getEnv().getHeight() &&
-						this.getEnv().getCellContent(row+1, col).equals(OptionEnum.No)) &&
+						this.getEnv().getCells()[row+1][ col].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row+1 || this.getCol() != col || ! this.getFace().equals(Face.N))){
 			throw new InvariantError("le Mob n'a pas avancé au Nord");
 		}
 
 		if( dir.equals(Face.N) &&
-				( ((! this.getEnv().getCellNature(row+1 , col).equals(Cell.EMP) && ! this.getEnv().getCellNature(row+1 , col).equals(Cell.DNO)) || 
+				( ((! this.getEnv().getCells()[row+1][ col].getNature().equals(Cell.EMP) &&
+						! this.getEnv().getCells()[row+1][ col].getNature().equals(Cell.DNO)) || 
 						row+1 >= this.getEnv().getHeight() ||
-						! this.getEnv().getCellContent(row+1, col).equals(OptionEnum.No)) &&
+						! this.getEnv().getCells()[row+1][ col].getContent().equals(OptionEnum.No)) &&
 
 						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.N))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
@@ -92,18 +94,20 @@ public class EntityContract extends EntityDecorator implements EntityService{
 		/*****E*******/
 
 		if( dir.equals(Face.E) &&
-				((this.getEnv().getCellNature(row , col+1).equals(Cell.EMP)||this.getEnv().getCellNature(row , col+1).equals(Cell.DNO)) &&
+				((this.getEnv().getCells()[row][col+1].getNature().equals(Cell.EMP)||
+						this.getEnv().getCells()[row][col+1].getNature().equals(Cell.DNO)) &&
 						col+1 <this.getEnv().getWidth() &&
-						this.getEnv().getCellContent(row, col+1).equals(OptionEnum.No)) &&
+						this.getEnv().getCells()[row][col+1].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row || this.getCol() != col+1 || ! this.getFace().equals(Face.N))){
 			throw new InvariantError("le Mob n'a pas avancé à l'est");
 		}
 
 		if( dir.equals(Face.E) &&
-				( (! this.getEnv().getCellNature(row , col+1).equals(Cell.EMP) && ! this.getEnv().getCellNature(row , col+1).equals(Cell.DNO)) || 
+				( (! this.getEnv().getCells()[row][col+1].getNature().equals(Cell.EMP) && 
+						! this.getEnv().getCells()[row][col+1].getNature().equals(Cell.DNO)) || 
 						col+1 >= this.getEnv().getHeight() ||
-						! this.getEnv().getCellContent(row, col+1).equals(OptionEnum.No) &&
+						! this.getEnv().getCells()[row][col+1].getContent().equals(OptionEnum.No) &&
 
 						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.N))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
@@ -112,18 +116,20 @@ public class EntityContract extends EntityDecorator implements EntityService{
 		/*****S*******/
 
 		if( dir.equals(Face.S) &&
-				((this.getEnv().getCellNature(row-1 , col).equals(Cell.EMP)||this.getEnv().getCellNature(row-1 , col).equals(Cell.DNO)) &&
+				((this.getEnv().getCells()[row-1][col].getNature().equals(Cell.EMP)||
+						this.getEnv().getCells()[row-1][col].getNature().equals(Cell.DNO)) &&
 						row-1 >= 0 &&
-						this.getEnv().getCellContent(row-1 , col).equals(OptionEnum.No)) &&
+								this.getEnv().getCells()[row-1][col].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row-1 || this.getCol() != col || ! this.getFace().equals(Face.N))){
 			throw new InvariantError("le Mob n'a pas avancé au Sud");
 		}
 
 		if( dir.equals(Face.S) &&
-				( (! this.getEnv().getCellNature(row-1 , col).equals(Cell.EMP) && ! this.getEnv().getCellNature(row-1 , col).equals(Cell.DNO)) || 
+				( (! this.getEnv().getCells()[row-1][col].getNature().equals(Cell.EMP) &&
+						! this.getEnv().getCells()[row-1][col].getNature().equals(Cell.DNO)) || 
 						row-1 < 0 ||
-						! this.getEnv().getCellContent(row-1, col).equals(OptionEnum.No) &&
+						! this.getEnv().getCells()[row-1][col].getContent().equals(OptionEnum.No) &&
 
 						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.N))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
@@ -132,18 +138,20 @@ public class EntityContract extends EntityDecorator implements EntityService{
 		/*****W*******/
 
 		if(dir.equals(Face.W) &&
-				((this.getEnv().getCellNature(row , col-1).equals(Cell.EMP)||this.getEnv().getCellNature(row , col-1).equals(Cell.DNO)) &&
+				((this.getEnv().getCells()[row][col-1].getNature().equals(Cell.EMP)||
+						this.getEnv().getCells()[row][col-1].getNature().equals(Cell.DNO)) &&
 						col-1 >= 0 &&
-						this.getEnv().getCellContent(row , col-1).equals(OptionEnum.No)) &&
+								this.getEnv().getCells()[row][col-1].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row || this.getCol() != col-1 || ! this.getFace().equals(Face.N)) ){
 			throw new InvariantError("le Mob n'a pas avancé au W");
 		}
 
 		if( dir.equals(Face.W) &&
-				( (! this.getEnv().getCellNature(row , col-1).equals(Cell.EMP) && ! this.getEnv().getCellNature(row , col-1).equals(Cell.DNO)) || 
+				( (! this.getEnv().getCells()[row][col-1].getNature().equals(Cell.EMP) &&
+						! this.getEnv().getCells()[row][col-1].getNature().equals(Cell.DNO)) || 
 						row-1 < 0 ||
-						! this.getEnv().getCellContent(row-1, col).equals(OptionEnum.No)) &&
+						! this.getEnv().getCells()[row][col-1].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.N)) ) {
 			throw new InvariantError("Le Mob n'est pas en bonne position");
@@ -161,18 +169,20 @@ public class EntityContract extends EntityDecorator implements EntityService{
 
 		/*****N*******/
 		if( dir.equals(Face.N) &&
-				((this.getEnv().getCellNature(row-1 , col).equals(Cell.EMP)||this.getEnv().getCellNature(row-1 , col).equals(Cell.DNO)) &&
+				((this.getEnv().getCells()[row-1][col].getNature().equals(Cell.EMP)||
+						this.getEnv().getCells()[row-1][col].getNature().equals(Cell.DNO)) &&
 						row-1 >=0 &&
-						this.getEnv().getCellContent(row-1, col).equals(OptionEnum.No)) &&
+								this.getEnv().getCells()[row-1][col].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row-1 || this.getCol() != col || ! this.getFace().equals(Face.N))){
 			throw new InvariantError("le Mob n'a pas reculer ");
 		}
 
 		if( dir.equals(Face.N) &&
-				( ((! this.getEnv().getCellNature(row-1 , col).equals(Cell.EMP) && ! this.getEnv().getCellNature(row-1 , col).equals(Cell.DNO)) || 
+				( ((! this.getEnv().getCells()[row-1][col].getNature().equals(Cell.EMP) && 
+						! this.getEnv().getCells()[row-1][col].getNature().equals(Cell.DNO)) || 
 						row-1 < 0 ||
-						! this.getEnv().getCellContent(row-1, col).equals(OptionEnum.No)) &&
+						! this.getEnv().getCells()[row-1][col].getContent().equals(OptionEnum.No)) &&
 
 						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.N))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
@@ -180,18 +190,20 @@ public class EntityContract extends EntityDecorator implements EntityService{
 
 		/*****S*******/
 		if( dir.equals(Face.S) &&
-				((this.getEnv().getCellNature(row+1 , col).equals(Cell.EMP)||this.getEnv().getCellNature(row+1 , col).equals(Cell.DNO)) &&
+				((this.getEnv().getCells()[row+1][col].getNature().equals(Cell.EMP)||
+						this.getEnv().getCells()[row+1][col].getNature().equals(Cell.DNO)) &&
 						row+1 <this.getEnv().getHeight() &&
-						this.getEnv().getCellContent(row+1, col).equals(OptionEnum.No)) &&
+						this.getEnv().getCells()[row+1][col].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row+1 || this.getCol() != col || ! this.getFace().equals(Face.S))){
 			throw new InvariantError("le Mob n'a pas reculé");
 		}
 
 		if( dir.equals(Face.S) &&
-				((! this.getEnv().getCellNature(row+1 , col).equals(Cell.EMP) && ! this.getEnv().getCellNature(row+1 , col).equals(Cell.DNO)) || 
+				((!this.getEnv().getCells()[row+1][col].getNature().equals(Cell.EMP) &&
+						! this.getEnv().getCells()[row+1][col].getNature().equals(Cell.DNO)) || 
 						row+1 >= this.getEnv().getHeight() ||
-						! this.getEnv().getCellContent(row+1, col).equals(OptionEnum.No)) &&
+						!  this.getEnv().getCells()[row+1][col].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row || this.getCol() != col|| ! this.getFace().equals(Face.S)) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
@@ -199,18 +211,20 @@ public class EntityContract extends EntityDecorator implements EntityService{
 
 		/*****E*******/
 		if( dir.equals(Face.E) &&
-				((this.getEnv().getCellNature(row , col+1).equals(Cell.EMP)||this.getEnv().getCellNature(row , col+1).equals(Cell.DNO)) &&
+				((this.getEnv().getCells()[row][col+1].getNature().equals(Cell.EMP)||
+						this.getEnv().getCells()[row][col+1].getNature().equals(Cell.DNO)) &&
 						col+1 < this.getEnv().getWidth() &&
-						this.getEnv().getCellContent(row, col+1).equals(OptionEnum.No)) &&
+						this.getEnv().getCells()[row][col+1].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row || this.getCol() != col+1 || ! this.getFace().equals(Face.E))){
 			throw new InvariantError("le Mob n'a pas reculé");
 		}
 
 		if( dir.equals(Face.E) &&
-				((! this.getEnv().getCellNature(row , col+1).equals(Cell.EMP) && ! this.getEnv().getCellNature(row , col+1).equals(Cell.DNO)) || 
+				((! this.getEnv().getCells()[row][col+1].getNature().equals(Cell.EMP) &&
+						! this.getEnv().getCells()[row][col+1].getNature().equals(Cell.DNO)) || 
 						col+1 >= this.getEnv().getWidth() ||
-						! this.getEnv().getCellContent(row, col+1).equals(OptionEnum.No)) &&
+						! this.getEnv().getCells()[row][col+1].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.E)) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
@@ -219,18 +233,20 @@ public class EntityContract extends EntityDecorator implements EntityService{
 		/*****W*******/
 
 		if( dir.equals(Face.W) &&
-				((this.getEnv().getCellNature(row , col-1).equals(Cell.EMP)||this.getEnv().getCellNature(row , col-1).equals(Cell.DNO)) &&
+				((this.getEnv().getCells()[row][col-1].getNature().equals(Cell.EMP)||
+						this.getEnv().getCells()[row][col-1].getNature().equals(Cell.DNO)) &&
 						col-1 >=0 &&
-						this.getEnv().getCellContent(row, col-1).equals(OptionEnum.No)) &&
+								this.getEnv().getCells()[row][col-1].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row || this.getCol() != col-1 || ! this.getFace().equals(Face.W))){
 			throw new InvariantError("le Mob n'a pas reculé");
 		}
 
 		if( dir.equals(Face.W) &&
-				((! this.getEnv().getCellNature(row , col-1).equals(Cell.EMP) && ! this.getEnv().getCellNature(row , col-1).equals(Cell.DNO)) || 
+				((! this.getEnv().getCells()[row][col-1].getNature().equals(Cell.EMP) &&
+						! this.getEnv().getCells()[row][col-1].getNature().equals(Cell.DNO)) || 
 						col-1 < 0 ||
-						! this.getEnv().getCellContent(row, col-1).equals(OptionEnum.No)) &&
+						! this.getEnv().getCells()[row][col-1].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.W)) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
@@ -299,18 +315,20 @@ public class EntityContract extends EntityDecorator implements EntityService{
 
 		/*****N*******/
 		if( dir.equals(Face.N) &&
-				((this.getEnv().getCellNature(row , col-1).equals(Cell.EMP)||this.getEnv().getCellNature(row , col-1).equals(Cell.DNO)) &&
+				(( this.getEnv().getCells()[row][col-1].getNature().equals(Cell.EMP)||
+						 this.getEnv().getCells()[row][col-1].getNature().equals(Cell.DNO)) &&
 						col-1 >= 0 &&
-						this.getEnv().getCellContent(row, col-1).equals(OptionEnum.No)) &&
+								this.getEnv().getCells()[row][col-1].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row || this.getCol() != col-1 || ! this.getFace().equals(Face.N))){
 			throw new InvariantError("le Mob n'a pas strafeL");
 		}
 
 		if( dir.equals(Face.N) &&
-				( ((! this.getEnv().getCellNature(row , col-1).equals(Cell.EMP) && ! this.getEnv().getCellNature(row , col-1).equals(Cell.DNO)) || 
+				( ((!  this.getEnv().getCells()[row][col-1].getNature().equals(Cell.EMP) && 
+						! this.getEnv().getCells()[row][col-1].getNature().equals(Cell.DNO)) || 
 						col-1 < 0  ||
-						! this.getEnv().getCellContent(row, col-1).equals(OptionEnum.No)) &&
+						! this.getEnv().getCells()[row][col-1].getContent().equals(OptionEnum.No)) &&
 
 						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.N))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
@@ -318,18 +336,20 @@ public class EntityContract extends EntityDecorator implements EntityService{
 
 		/*****S*******/
 		if( dir.equals(Face.S) &&
-				((this.getEnv().getCellNature(row , col+1).equals(Cell.EMP)||this.getEnv().getCellNature(row , col+1).equals(Cell.DNO)) &&
+				((this.getEnv().getCells()[row][col+1].getNature().equals(Cell.EMP)||
+						this.getEnv().getCells()[row][col+1].getNature().equals(Cell.DNO)) &&
 						col+1 < this.getEnv().getWidth() &&
-						this.getEnv().getCellContent(row, col+1).equals(OptionEnum.No)) &&
+						this.getEnv().getCells()[row][col+1].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row || this.getCol() != col+1 || ! this.getFace().equals(Face.S))){
 			throw new InvariantError("le Mob n'a pas strafeL");
 		}
 
 		if( dir.equals(Face.S) &&
-				( ((! this.getEnv().getCellNature(row , col+1).equals(Cell.EMP) && ! this.getEnv().getCellNature(row , col+1).equals(Cell.DNO)) || 
+				( ((! this.getEnv().getCells()[row][col+1].getNature().equals(Cell.EMP) && 
+						! this.getEnv().getCells()[row][col+1].getNature().equals(Cell.DNO)) || 
 						col+1 >= this.getEnv().getWidth() ||
-						! this.getEnv().getCellContent(row, col+1).equals(OptionEnum.No)) &&
+						! this.getEnv().getCells()[row][col+1].getContent().equals(OptionEnum.No)) &&
 
 						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.S))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
@@ -337,18 +357,20 @@ public class EntityContract extends EntityDecorator implements EntityService{
 
 		/*****E*******/
 		if( dir.equals(Face.E) &&
-				((this.getEnv().getCellNature(row-1 , col).equals(Cell.EMP)||this.getEnv().getCellNature(row-1 , col).equals(Cell.DNO)) &&
+				((this.getEnv().getCells()[row-1][col].getNature().equals(Cell.EMP)||
+						this.getEnv().getCells()[row-1][col].getNature().equals(Cell.DNO)) &&
 						row-1 >= 0 &&
-						this.getEnv().getCellContent(row-1, col).equals(OptionEnum.No)) &&
+								this.getEnv().getCells()[row-1][col].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row-1 || this.getCol() != col || ! this.getFace().equals(Face.E))){
 			throw new InvariantError("le Mob n'a pas strafeL");
 		}
 
 		if( dir.equals(Face.E) &&
-				( ((! this.getEnv().getCellNature(row-1 , col).equals(Cell.EMP) && ! this.getEnv().getCellNature(row-1 , col).equals(Cell.DNO)) || 
+				( ((! this.getEnv().getCells()[row-1][col].getNature().equals(Cell.EMP) &&
+						! this.getEnv().getCells()[row-1][col].getNature().equals(Cell.DNO)) || 
 						row-1 < 0 ||
-						! this.getEnv().getCellContent(row-1, col).equals(OptionEnum.No)) &&
+						! this.getEnv().getCells()[row-1][col].getContent().equals(OptionEnum.No)) &&
 
 						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.E))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
@@ -356,18 +378,20 @@ public class EntityContract extends EntityDecorator implements EntityService{
 
 		/*****W*******/
 		if( dir.equals(Face.W) &&
-				((this.getEnv().getCellNature(row+1 , col).equals(Cell.EMP)||this.getEnv().getCellNature(row+1 , col).equals(Cell.DNO)) &&
+				((this.getEnv().getCells()[row+1][col].getNature().equals(Cell.EMP)||
+						this.getEnv().getCells()[row+1][col].getNature().equals(Cell.DNO)) &&
 						row+1 < this.getEnv().getHeight() &&
-						this.getEnv().getCellContent(row+1, col).equals(OptionEnum.No)) &&
+						this.getEnv().getCells()[row+1][col].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row+1 || this.getCol() != col || ! this.getFace().equals(Face.W))){
 			throw new InvariantError("le Mob n'a pas strafeL");
 		}
 
 		if( dir.equals(Face.W) &&
-				( ((! this.getEnv().getCellNature(row+1 , col).equals(Cell.EMP) && ! this.getEnv().getCellNature(row+1 , col).equals(Cell.DNO)) || 
+				( ((! this.getEnv().getCells()[row+1][col].getNature().equals(Cell.EMP) && 
+						! this.getEnv().getCells()[row+1][col].getNature().equals(Cell.DNO)) || 
 						row+1 >= this.getEnv().getHeight() ||
-						! this.getEnv().getCellContent(row+1, col).equals(OptionEnum.No)) &&
+						! this.getEnv().getCells()[row+1][col].getContent().equals(OptionEnum.No)) &&
 
 						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.E))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
@@ -386,18 +410,20 @@ public class EntityContract extends EntityDecorator implements EntityService{
 		Face dir = this.getFace();
 		/*****N*******/
 		if( dir.equals(Face.N) &&
-				((this.getEnv().getCellNature(row , col+1).equals(Cell.EMP)||this.getEnv().getCellNature(row , col+1).equals(Cell.DNO)) &&
+				((this.getEnv().getCells()[row][col+1].getNature().equals(Cell.EMP)||
+						this.getEnv().getCells()[row][col+1].getNature().equals(Cell.DNO)) &&
 						col+1 < this.getEnv().getWidth() &&
-						this.getEnv().getCellContent(row, col+1).equals(OptionEnum.No)) &&
+						this.getEnv().getCells()[row][col+1].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row || this.getCol() != col+1 || ! this.getFace().equals(Face.N))){
 			throw new InvariantError("le Mob n'a pas strafeR");
 		}
 
 		if( dir.equals(Face.N) &&
-				( ((! this.getEnv().getCellNature(row , col+1).equals(Cell.EMP) && ! this.getEnv().getCellNature(row , col+1).equals(Cell.DNO)) || 
+				( ((! this.getEnv().getCells()[row][col+1].getNature().equals(Cell.EMP) &&
+						! this.getEnv().getCells()[row][col+1].getNature().equals(Cell.DNO)) || 
 						col+1 >= this.getEnv().getWidth() ||
-						! this.getEnv().getCellContent(row, col+1).equals(OptionEnum.No)) &&
+						! this.getEnv().getCells()[row][col+1].getContent().equals(OptionEnum.No)) &&
 
 						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.N))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
@@ -405,18 +431,20 @@ public class EntityContract extends EntityDecorator implements EntityService{
 
 		/*****S*******/
 		if( dir.equals(Face.S) &&
-				((this.getEnv().getCellNature(row , col-1).equals(Cell.EMP)||this.getEnv().getCellNature(row , col-1).equals(Cell.DNO)) &&
+				((this.getEnv().getCells()[row][col-1].getNature().equals(Cell.EMP)||
+						this.getEnv().getCells()[row][col-1].getNature().equals(Cell.DNO)) &&
 						col-1 >= 0 &&
-						this.getEnv().getCellContent(row, col-1).equals(OptionEnum.No)) &&
+								this.getEnv().getCells()[row][col-1].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row || this.getCol() != col-1 || ! this.getFace().equals(Face.S))){
 			throw new InvariantError("le Mob n'a pas strafeR");
 		}
 
 		if( dir.equals(Face.S) &&
-				( ((! this.getEnv().getCellNature(row , col-1).equals(Cell.EMP) && ! this.getEnv().getCellNature(row , col-1).equals(Cell.DNO)) || 
+				( ((! this.getEnv().getCells()[row][col-1].getNature().equals(Cell.EMP) && 
+						! this.getEnv().getCells()[row][col-1].getNature().equals(Cell.DNO)) || 
 						col-1 < 0  ||
-						! this.getEnv().getCellContent(row, col-1).equals(OptionEnum.No)) &&
+						! this.getEnv().getCells()[row][col-1].getContent().equals(OptionEnum.No)) &&
 
 						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.S))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
@@ -424,18 +452,20 @@ public class EntityContract extends EntityDecorator implements EntityService{
 
 		/*****E*******/
 		if( dir.equals(Face.E) &&
-				((this.getEnv().getCellNature(row+1 , col).equals(Cell.EMP)||this.getEnv().getCellNature(row+1 , col).equals(Cell.DNO)) &&
+				((this.getEnv().getCells()[row+1][col].getNature().equals(Cell.EMP)||
+						this.getEnv().getCells()[row+1][col].getNature().equals(Cell.DNO)) &&
 						row+1 < this.getEnv().getHeight() &&
-						this.getEnv().getCellContent(row+1, col).equals(OptionEnum.No)) &&
+						this.getEnv().getCells()[row+1][col].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row+1 || this.getCol() != col || ! this.getFace().equals(Face.E))){
 			throw new InvariantError("le Mob n'a pas strafeR");
 		}
 
 		if( dir.equals(Face.E) &&
-				( ((! this.getEnv().getCellNature(row+1 , col).equals(Cell.EMP) && ! this.getEnv().getCellNature(row+1 , col).equals(Cell.DNO)) || 
+				( ((!this.getEnv().getCells()[row+1][col].getNature().equals(Cell.EMP) && 
+						! this.getEnv().getCells()[row+1][col].getNature().equals(Cell.DNO)) || 
 						row+1 >= this.getEnv().getHeight() ||
-						! this.getEnv().getCellContent(row+1, col).equals(OptionEnum.No)) &&
+						! this.getEnv().getCells()[row+1][col].getContent().equals(OptionEnum.No)) &&
 
 						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.E))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");
@@ -444,18 +474,20 @@ public class EntityContract extends EntityDecorator implements EntityService{
 
 		/*****W*******/
 		if( dir.equals(Face.W) &&
-				((this.getEnv().getCellNature(row-1 , col).equals(Cell.EMP)||this.getEnv().getCellNature(row-1 , col).equals(Cell.DNO)) &&
+				((this.getEnv().getCells()[row-1][col].getNature().equals(Cell.EMP)||
+						this.getEnv().getCells()[row-1][col].getNature().equals(Cell.DNO)) &&
 						row-1 >= 0 &&
-						this.getEnv().getCellContent(row-1, col).equals(OptionEnum.No)) &&
+								this.getEnv().getCells()[row-1][col].getContent().equals(OptionEnum.No)) &&
 
 				(this.getRow() != row-1 || this.getCol() != col || ! this.getFace().equals(Face.W))){
 			throw new InvariantError("le Mob n'a pas strafeR");
 		}
 
 		if( dir.equals(Face.W) &&
-				( ((! this.getEnv().getCellNature(row-1 , col).equals(Cell.EMP) && ! this.getEnv().getCellNature(row-1 , col).equals(Cell.DNO)) || 
+				( ((! this.getEnv().getCells()[row-1][col].getNature().equals(Cell.EMP) &&
+						! this.getEnv().getCells()[row-1][col].getNature().equals(Cell.DNO)) || 
 						row-1 < 0 ||
-						! this.getEnv().getCellContent(row-1, col).equals(OptionEnum.No)) &&
+						! this.getEnv().getCells()[row-1][col].getContent().equals(OptionEnum.No)) &&
 
 						(this.getRow() != row || this.getCol() != col || ! this.getFace().equals(Face.W))) ){
 			throw new InvariantError("Le Mob n'est pas en bonne position");

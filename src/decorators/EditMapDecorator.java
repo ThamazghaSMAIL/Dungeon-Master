@@ -2,7 +2,6 @@ package decorators;
 
 
 import servives.EditMapService;
-import tools.Cell;
 
 public class EditMapDecorator extends MapDecorator implements EditMapService {
 
@@ -19,11 +18,6 @@ public class EditMapDecorator extends MapDecorator implements EditMapService {
 	@Override
 	public boolean isReady() {
 		return serv.isReady();
-	}
-	
-	@Override
-	public void setNature(int i, int j, Cell c) {
-		 serv.setNature(i, j, c);
 	}
 
 }

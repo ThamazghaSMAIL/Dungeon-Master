@@ -1,10 +1,13 @@
-package tools;
+package implm;
 
 import servives.CelluleService;
+import tools.Cell;
+import tools.OptionEnum;
+import tools.OptionFood;
 
-public class Cellule implements CelluleService {
+public class CelluleImplem implements CelluleService {
 
-	public Cellule() {
+	public CelluleImplem() {
 	}
 
 	public int i ;
@@ -24,55 +27,46 @@ public class Cellule implements CelluleService {
 		this.clef = false;
 	}
 	
-	
-	public boolean getClef() {
-		return this.clef;
-	}
-
-	public void setClef(boolean b) {
-		this.clef = b ;
-	}
-
+	@Override
 	public OptionEnum getContent() {
 		return this.opt;
 	}
-
+	@Override
 	public void setContent(OptionEnum opt) {
 		this.opt = opt ;
 	}
-
+	@Override
 	public OptionFood ContainsFood() {
 		return this.food;
 	}
-
+	@Override
 	public void setFood(OptionFood food) {
 		this.food = food ;
 	}
-
+	@Override
 	public int getI() {
 		return i;
 	}
+	
+	@Override
 	public void setI(int i) {
 		this.i = i;
 	}
+	@Override
 	public int getJ() {
 		return j;
 	}
+	@Override
 	public void setJ(int j) {
 		this.j = j;
 	}
+	@Override
 	public Cell getNature() {
 		return nature;
 	}
+	@Override
 	public void setNature(Cell nature) {
 		this.nature = nature;
 	}
-
-	public Cell getNaturePrec() {
-		return nature;
-	}
-	public void setNaturePrec(Cell nature) {
-		this.nature = nature;
-	}
-
+	
 }

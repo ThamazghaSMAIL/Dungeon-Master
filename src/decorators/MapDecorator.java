@@ -3,7 +3,7 @@ package decorators;
 
 import servives.MapService;
 import tools.Cell;
-import tools.Cellule;
+import implm.CelluleImplem;
 
 public class MapDecorator implements MapService {
 	private MapService serv;
@@ -28,10 +28,6 @@ public class MapDecorator implements MapService {
 		return serv.getWidth();
 	}
 
-	@Override
-	public Cell getCellNature(int i, int j) {
-		return serv.getCellNature(i, j);
-	}
 
 	@Override
 	public void OpenDoor(int i, int j) {
@@ -53,17 +49,12 @@ public class MapDecorator implements MapService {
 
 	
 	@Override
-	public Cellule getCell(int i, int j) {
-		return serv.getCell(i, j);
-	}
-
-	@Override
-	public Cellule[][] getCells() {
+	public CelluleImplem[][] getCells() {
 		return serv.getCells();
 	}
 
 	@Override
-	public void setCells(Cellule[][] cells) {
+	public void setCells(CelluleImplem[][] cells) {
 		serv.setCells(cells);
 	}
 

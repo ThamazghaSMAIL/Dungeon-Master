@@ -2,11 +2,11 @@ package tools;
 
 public class Option<T> {
 	private OptionEnum oe;
-	private T t;
+	private T content;
 		
-	public Option(OptionEnum oe, T t) {
+	public Option(OptionEnum oe, T content) {
 		this.oe = oe;
-		this.t = t;
+		this.content =content;
 	}
 	
 	public OptionEnum getOe() {
@@ -14,7 +14,7 @@ public class Option<T> {
 	}
 
 	public T getT() {
-		return t;
+		return content;
 	}
 	
 }

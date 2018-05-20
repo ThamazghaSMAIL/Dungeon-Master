@@ -94,29 +94,29 @@ public class CowImplem implements CowService, EntityService{
 	public void forward() {
 		if( this.face.equals(Face.N)) {
 			if( casePossible(this.row-1, this.col)){
-				this.getEnv().getCell(this.row, this.col).setContent(OptionEnum.No);
-				this.getEnv().getCell(this.row-1, this.col).setContent(OptionEnum.So);
+				this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
+				this.getEnv().getCells()[this.row-1][this.col].setContent(OptionEnum.So);
 				this.row--;
 			}
 		}else {
 			if( this.face.equals(Face.S)) {
 				if( casePossible(this.row+1, this.col)) {
-					this.getEnv().getCell(this.row, this.col).setContent(OptionEnum.No);
-					this.getEnv().getCell(this.row-1, this.col).setContent(OptionEnum.So);
+					this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
+					this.getEnv().getCells()[this.row-1][this.col].setContent(OptionEnum.So);
 					this.row++;
 				}
 			}else {
 				if( this.face.equals(Face.E)) {
 					if( casePossible(this.row, this.col +1 )) {
-						this.getEnv().getCell(this.row, this.col).setContent(OptionEnum.No);
-						this.getEnv().getCell(this.row, this.col+1).setContent(OptionEnum.So);
+						this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
+						this.getEnv().getCells()[this.row][this.col+1].setContent(OptionEnum.So);
 						this.col++;
 					}
 				}else {
 					if( this.face.equals(Face.W)) {
 						if( casePossible(this.row, this.col-1) ) {
-							this.getEnv().getCell(this.row, this.col).setContent(OptionEnum.No);
-							this.getEnv().getCell(this.row, this.col-1).setContent(OptionEnum.So);
+							this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
+							this.getEnv().getCells()[this.row][this.col-1].setContent(OptionEnum.So);
 							this.col--;
 						}
 					}
@@ -129,29 +129,29 @@ public class CowImplem implements CowService, EntityService{
 	public void backward() {
 		if( this.face.equals(Face.N)) {
 			if( casePossible(this.row+1, this.col) ) {
-				this.getEnv().getCell(this.row, this.col).setContent(OptionEnum.No);
-				this.getEnv().getCell(this.row+1, this.col).setContent(OptionEnum.So);
+				this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
+				this.getEnv().getCells()[this.row+1][this.col].setContent(OptionEnum.So);
 				this.row++;
 			}
 		}else {
 			if( this.face.equals(Face.S)) {
 				if( casePossible(this.row-1, this.col) ) {
-					this.getEnv().getCell(this.row, this.col).setContent(OptionEnum.No);
-					this.getEnv().getCell(this.row-1, this.col).setContent(OptionEnum.So);
+					this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
+					this.getEnv().getCells()[this.row-1][this.col].setContent(OptionEnum.So);
 					this.row--;
 				}
 			}else {
 				if( this.face.equals(Face.E)) {
 					if( casePossible(this.row, this.col-1) ) {
-						this.getEnv().getCell(this.row, this.col).setContent(OptionEnum.No);
-						this.getEnv().getCell(this.row, this.col-1).setContent(OptionEnum.So);
+						this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
+						this.getEnv().getCells()[this.row][this.col-1].setContent(OptionEnum.So);
 						this.col--;
 					}
 				}else {
 					if( this.face.equals(Face.W)) {
 						if( casePossible(this.row, this.col+1) ) {
-							this.getEnv().getCell(this.row, this.col).setContent(OptionEnum.No);
-							this.getEnv().getCell(this.row, this.col+1).setContent(OptionEnum.So);
+							this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
+							this.getEnv().getCells()[this.row][this.col+1].setContent(OptionEnum.So);
 							this.col++;
 						}
 					}
@@ -168,15 +168,15 @@ public class CowImplem implements CowService, EntityService{
 			if( this.col-1 >=0 )
 				if( casePossible(this.row, this.col-1) ) {
 
-					this.getEnv().getCell(this.row, this.col).setContent(OptionEnum.No);
-					this.getEnv().getCell(this.row, this.col-1).setContent(OptionEnum.So);
+					this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
+					this.getEnv().getCells()[this.row][this.col-1].setContent(OptionEnum.So);
 					this.col--;
 				}
 		}else {
 			if( this.face.equals(Face.S)) {
 				if( casePossible(this.row, this.col+1) ) {
-					this.getEnv().getCell(this.row, this.col).setContent(OptionEnum.No);
-					this.getEnv().getCell(this.row, this.col+1).setContent(OptionEnum.So);
+					this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
+					this.getEnv().getCells()[this.row][this.col+1].setContent(OptionEnum.So);
 					this.col++;
 				}
 			}else {
@@ -184,15 +184,15 @@ public class CowImplem implements CowService, EntityService{
 					if(this.row-1 >=0 )
 						if( casePossible(this.row-1, this.col) ) {
 
-							this.getEnv().getCell(this.row, this.col).setContent(OptionEnum.No);
-							this.getEnv().getCell(this.row-1, this.col).setContent(OptionEnum.So);
+							this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
+							this.getEnv().getCells()[this.row-1][this.col].setContent(OptionEnum.So);
 							this.row--;
 						}
 				}else {
 					if( this.face.equals(Face.W)) {
 						if( casePossible(this.row+1, this.col) ) {
-							this.getEnv().getCell(this.row, this.col).setContent(OptionEnum.No);
-							this.getEnv().getCell(this.row+1, this.col).setContent(OptionEnum.So);
+							this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
+							this.getEnv().getCells()[this.row+1][this.col].setContent(OptionEnum.So);
 							this.row++;
 						}
 					}
@@ -205,15 +205,15 @@ public class CowImplem implements CowService, EntityService{
 	public void strafeR() {
 		if( this.face.equals(Face.N)) {
 			if( casePossible(this.row, this.col+1) ) {
-				this.getEnv().getCell(this.row, this.col).setContent(OptionEnum.No);
-				this.getEnv().getCell(this.row, this.col+1).setContent(OptionEnum.So);
+				this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
+				this.getEnv().getCells()[this.row][this.col+1].setContent(OptionEnum.So);
 				this.col++;
 			}
 		}else {
 			if( this.face.equals(Face.S)) {
 				if( casePossible(this.row, this.col-1) ) {
-					this.getEnv().getCell(this.row, this.col).setContent(OptionEnum.No);
-					this.getEnv().getCell(this.row, this.col-1).setContent(OptionEnum.So);
+					this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
+					this.getEnv().getCells()[this.row][this.col-1].setContent(OptionEnum.So);
 					this.col--;
 
 				}
@@ -221,16 +221,16 @@ public class CowImplem implements CowService, EntityService{
 				if( this.face.equals(Face.E)) {
 					if( casePossible(this.row+1, this.col) ) {
 
-						this.getEnv().getCell(this.row, this.col).setContent(OptionEnum.No);
-						this.getEnv().getCell(this.row+1, this.col).setContent(OptionEnum.So);
+						this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
+						this.getEnv().getCells()[this.row+1][this.col].setContent(OptionEnum.So);
 						this.row++;
 
 					}
 				}else {
 					if( this.face.equals(Face.W)) {
 						if( casePossible(this.row-1, this.col) ) {
-							this.getEnv().getCell(this.row, this.col).setContent(OptionEnum.No);
-							this.getEnv().getCell(this.row-1, this.col).setContent(OptionEnum.So);
+							this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
+							this.getEnv().getCells()[this.row-1][this.col].setContent(OptionEnum.So);
 							this.row--;
 						}
 					}

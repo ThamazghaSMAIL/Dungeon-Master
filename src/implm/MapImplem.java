@@ -4,27 +4,20 @@ package implm;
 
 import servives.MapService;
 import tools.Cell;
-import tools.Cellule;
+import implm.CelluleImplem;
 
 public class MapImplem implements MapService{
 	public MapImplem() {}
 
 	public int height ;
 	public int width ;
-	public Cellule[][] cells ;
+	public CelluleImplem[][] cells ;
 	
 
-	public Cellule getCell(int i, int j) {
+	public CelluleImplem getCell(int i, int j) {
 		return this.cells[i][j];
 	}
 
-	@Override
-	public Cell getCellNature(int i, int j) {
-		if ( getCell(i, j) != null ){
-			return getCell(i, j).getNature();
-		}
-		return null ;
-	}
 
 	//CellNature(M,x,y) { fDNC, DWC }
 	@Override
@@ -66,7 +59,7 @@ public class MapImplem implements MapService{
 		
 		this.height = h;
 		this.width = w;
-		this.cells = new Cellule[100][100];
+		this.cells = new CelluleImplem[100][100];
 		
 		int random ;
 
@@ -76,12 +69,12 @@ public class MapImplem implements MapService{
 					continue;
 				}else {
 					if( i ==0 && j == 0 ) {
-						this.cells[i][j] = new Cellule();
+						this.cells[i][j] = new CelluleImplem();
 						this.cells[i][j].init( 0, 0 , Cell.OUT);
 						continue;
 					}else {
 						if( i ==h-1 && j == w-1 ) {
-							this.cells[i][j] = new Cellule( );
+							this.cells[i][j] = new CelluleImplem( );
 							this.cells[i][j].init(0, 0 , Cell.IN);
 							continue;
 						}else {
@@ -93,24 +86,24 @@ public class MapImplem implements MapService{
 								if( i>0 && j>0 && i< h-1 && j< w-1 ) {
 									if( contient (i-1, j,Cell.WLL) && contient(i, j-1, Cell.EMP) )
 									{
-										this.cells[i][j] = new Cellule();
+										this.cells[i][j] = new CelluleImplem();
 										this.cells[i][j].init( i, j , Cell.DWC);
 										
-										this.cells[i][j+1] = new Cellule();
+										this.cells[i][j+1] = new CelluleImplem();
 										this.cells[i][j+1].init( i, j+1 , Cell.EMP);
 										
-										this.cells[i+1][j] = new Cellule();
+										this.cells[i+1][j] = new CelluleImplem();
 										this.cells[i+1][j].init( i+1, j , Cell.WLL);
 										
 										continue;
 									}else {
-										this.cells[i][j] = new Cellule();
+										this.cells[i][j] = new CelluleImplem();
 										this.cells[i][j].init( i, j , Cell.EMP);
 										
 										continue;
 									}
 								}else {
-									this.cells[i][j] = new Cellule();
+									this.cells[i][j] = new CelluleImplem();
 									this.cells[i][j].init( i, j , Cell.EMP);
 									
 									continue;
@@ -119,24 +112,24 @@ public class MapImplem implements MapService{
 								if( i>0 && j>0 && i< h-1 && j< w-1 ) {
 									if( contient (i-1, j,Cell.WLL) && contient(i, j-1, Cell.EMP) )
 									{
-										this.cells[i][j] = new Cellule( );
+										this.cells[i][j] = new CelluleImplem( );
 										this.cells[i][j].init(i, j , Cell.DWO);
 										
-										this.cells[i][j+1] = new Cellule();
+										this.cells[i][j+1] = new CelluleImplem();
 										this.cells[i][j+1].init( i, j+1 , Cell.EMP);
 										
-										this.cells[i+1][j] = new Cellule();
+										this.cells[i+1][j] = new CelluleImplem();
 										this.cells[i+1][j].init( i+1, j , Cell.WLL);
 										
 										continue;
 									}else {
-										this.cells[i][j] = new Cellule();
+										this.cells[i][j] = new CelluleImplem();
 										this.cells[i][j].init( i, j , Cell.EMP);
 										
 										continue;
 									}
 								}else {
-									this.cells[i][j] = new Cellule();
+									this.cells[i][j] = new CelluleImplem();
 									this.cells[i][j].init( i, j , Cell.EMP);
 									continue;
 								}
@@ -144,23 +137,23 @@ public class MapImplem implements MapService{
 								if( i>0 && j>0 && i< h-1 && j< w-1 ) {
 									if( contient (i-1, j,Cell.EMP) && contient(i, j-1, Cell.WLL) )
 									{
-										this.cells[i][j] = new Cellule();
+										this.cells[i][j] = new CelluleImplem();
 										this.cells[i][j].init( i, j , Cell.DNC);
 										
-										this.cells[i][j+1] = new Cellule( );
+										this.cells[i][j+1] = new CelluleImplem( );
 										this.cells[i][j+1].init(i, j , Cell.WLL);
 										
-										this.cells[i+1][j] = new Cellule( );
+										this.cells[i+1][j] = new CelluleImplem( );
 										this.cells[i+1][j].init(i, j , Cell.EMP);
 										
 										continue;
 									}else {
-										this.cells[i][j] = new Cellule();
+										this.cells[i][j] = new CelluleImplem();
 										this.cells[i][j].init(i, j , Cell.WLL);
 										continue;
 									}
 								}else {
-									this.cells[i][j] = new Cellule();
+									this.cells[i][j] = new CelluleImplem();
 									this.cells[i][j].init( i, j , Cell.WLL);
 									continue;
 								}
@@ -168,22 +161,22 @@ public class MapImplem implements MapService{
 								if( i>0 && j>0 && i< h-1 && j< w-1 ) {
 									if( contient (i-1, j,Cell.EMP) && contient(i, j-1, Cell.WLL) )
 									{
-										this.cells[i][j] = new Cellule( );
+										this.cells[i][j] = new CelluleImplem( );
 										this.cells[i][j].init(i, j , Cell.DNO);
 										
-										this.cells[i][j+1] = new Cellule();
+										this.cells[i][j+1] = new CelluleImplem();
 										this.cells[i][j+1].init(i, j , Cell.WLL);
 										
-										this.cells[i+1][j] = new Cellule();
+										this.cells[i+1][j] = new CelluleImplem();
 										this.cells[i+1][j].init( i, j , Cell.EMP);
 										continue;
 									}else {
-										this.cells[i][j] = new Cellule();
+										this.cells[i][j] = new CelluleImplem();
 										this.cells[i][j].init(i, j , Cell.WLL);
 										continue;
 									}
 								}else {
-									this.cells[i][j] = new Cellule();
+									this.cells[i][j] = new CelluleImplem();
 									this.cells[i][j].init( i, j , Cell.WLL);
 									
 									continue;
@@ -198,11 +191,11 @@ public class MapImplem implements MapService{
 	}
 
 	@Override
-	public Cellule[][] getCells() {
+	public CelluleImplem[][] getCells() {
 		return this.cells;
 	}
 
-	public void setCells(Cellule[][] cells) {
+	public void setCells(CelluleImplem[][] cells) {
 		this.cells = cells;
 	}
 	@Override

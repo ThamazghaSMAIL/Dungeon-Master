@@ -25,15 +25,6 @@ public class PlayerDecorator implements PlayerService{
 	
 	
 
-	@Override
-	public OptionEnum getContent(int row, int col) {
-		return serv.getContent(row, col);
-	}
-
-	@Override
-	public Cell getNature(int row, int col) {
-		return serv.getNature(row, col);
-	}
 
 	@Override
 	public boolean Viewable(int row, int col) {
@@ -145,19 +136,45 @@ public class PlayerDecorator implements PlayerService{
 		return serv.getTresorFound();
 	}
 
-	@Override
-	public int getNbClefs() {
-		return serv.getNbClefs();
-	}
-
-	@Override
-	public void setNbClefs(int nb) {
-		serv.setNbClefs(nb);
-	}
 
 	@Override
 	public void setHp(int hp) {
 		serv.setHp(hp);
+	}
+
+
+
+	@Override
+	public boolean isEnVie() {
+		return serv.isEnVie();
+	}
+
+
+
+	@Override
+	public void setEnVie(boolean etat) {
+		serv.setEnVie(etat);
+	}
+
+
+
+	@Override
+	public Commande getLastCommande() {
+		return serv.getLastCommande();
+	}
+
+
+
+	@Override
+	public void setLastCommande(Commande lastCommande) {
+		serv.setLastCommande(lastCommande);
+	}
+
+
+
+	@Override
+	public boolean getClefFound() {
+		return serv.getClefFound();
 	}
 
 

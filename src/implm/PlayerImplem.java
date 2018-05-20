@@ -1,27 +1,31 @@
 package implm;
 
-import servives.EntityService;
 import servives.EnvironnementService;
 import servives.PlayerService;
 import tools.Cell;
-import tools.Cellule;
+import implm.CelluleImplem;
+import tools.Commande;
 import tools.Face;
 import tools.OptionEnum;
 import ui.Controller;
 
-public class PlayerImplem implements PlayerService, EntityService {
+public class PlayerImplem extends EntityImplem implements PlayerService {
 
 	Controller controller = new Controller();
 
 	protected int hp;
 	protected int row;
 	protected int col;
-	protected Face face=Face.N;
+	protected Face face;
 	protected EnvironnementService env;
-	protected boolean tresorFound = false;
-	protected int NbClefs = 0;
 	protected boolean enVie;
+	protected Commande lastCommande = null;
 
+	
+	protected boolean tresorFound = false;//rajouter les spec sur le trésor
+	protected boolean clefFound = false;//rajouter la cond dans player : que clefound = false initialement
+	
+	
 	public  PlayerImplem() {
 	}
 
@@ -36,15 +40,7 @@ public class PlayerImplem implements PlayerService, EntityService {
 	}
 
 
-	@Override
-	public OptionEnum getContent(int row, int col) {
-		return this.getEnv().getCellContent(row, col);
-	}
-
-	@Override
-	public Cell getNature(int row, int col) {
-		return getEnv().getCellNature(row,col);
-	}
+	
 
 	@Override
 	public boolean Viewable(int row, int col) {
@@ -52,7 +48,9 @@ public class PlayerImplem implements PlayerService, EntityService {
 			return false;
 		} else {
 			//WALL, DWC, DNC
-			if( this.getContent(row, col).equals(Cell.WLL) || this.getContent(row, col).equals(Cell.DNC) || this.getContent(row, col).equals(Cell.DWC)) {
+			if( this.env.getCells()[row][col].getContent().equals(Cell.WLL) || 
+					this.env.getCells()[row][col].getContent().equals(Cell.DNC) ||
+					this.env.getCells()[row][col].getContent().equals(Cell.DWC)) {
 				return false;
 			}else {
 				return true;
@@ -84,7 +82,7 @@ public class PlayerImplem implements PlayerService, EntityService {
 
 	@Override
 	public void forward() {
-		Cellule cellSvte = null;
+		CelluleImplem cellSvte = null;
 		if( this.row == this.getEnv().getTresor().getI() && this.col == this.getEnv().getTresor().getJ() ) {
 			tresorFound = true ;
 			System.out.println(" Géniale ! vous avez trouvé le trésor, maintenant il faut rejoindre la sortie ");
@@ -94,19 +92,16 @@ public class PlayerImplem implements PlayerService, EntityService {
 			cellSvte = this.getEnv().getCells()[this.getRow()-1][this.getCol()];
 			if( this.row -1 >= 0)
 				if( ! cellSvte.getNature().equals(Cell.WLL) ) {
-					if( this.env.getCellContent( cellSvte.getI(), cellSvte.getJ()).equals(OptionEnum.No)){
-						if( cellSvte.getClef() ) {
-							this.setNbClefs(this.getNbClefs()+2);
+					if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No)){
+						if( cellSvte.getI() == env.getClef().getI() &&  cellSvte.getJ() == env.getClef().getJ()) {
+							
 						}
 						this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 						cellSvte.setContent(OptionEnum.So);
 						this.row--;
 					}else {
-						if(this.env.getCellContent( cellSvte.getI(), cellSvte.getJ()).equals(OptionEnum.Fo)){
+						if(this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.Fo)){
 							System.out.println("there is food");
-							if( cellSvte.getClef() ) {
-								this.setNbClefs(this.getNbClefs()+2);
-							}
 							this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 							cellSvte.setContent(OptionEnum.So);
 							this.row--;
@@ -119,10 +114,7 @@ public class PlayerImplem implements PlayerService, EntityService {
 				cellSvte = this.getEnv().getCells()[this.getRow()+1][this.getCol()];
 				if( this.row+1 < this.getEnv().getHeight() )
 					if( ! cellSvte.getNature().equals(Cell.WLL) ) 
-						if( this.env.getCellContent( cellSvte.getI(), cellSvte.getJ()).equals(OptionEnum.No) ) {
-							if( cellSvte.getClef() ) {
-								this.setNbClefs(this.getNbClefs()+2);
-							}
+						if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No) ) {
 							this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 							cellSvte.setContent(OptionEnum.So);
 							this.row++;
@@ -134,10 +126,7 @@ public class PlayerImplem implements PlayerService, EntityService {
 					cellSvte = this.getEnv().getCells()[this.getRow()][this.getCol()+1];
 					if( this.col+1 < this.env.getWidth() )
 						if( ! cellSvte.getNature().equals(Cell.WLL) ) 
-							if( this.env.getCellContent( cellSvte.getI(), cellSvte.getJ()).equals(OptionEnum.No) ) {
-								if( cellSvte.getClef() ) {
-									this.setNbClefs(this.getNbClefs()+2);
-								}
+							if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No) ) {
 								this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 								cellSvte.setContent(OptionEnum.So);
 								this.col++;
@@ -148,10 +137,7 @@ public class PlayerImplem implements PlayerService, EntityService {
 						cellSvte = this.getEnv().getCells()[this.getRow()][this.getCol()-1];
 						if( this.col -1 >= 0 ) {
 							if( ! cellSvte.getNature().equals(Cell.WLL) ) 
-								if( this.env.getCellContent( cellSvte.getI(), cellSvte.getJ()).equals(OptionEnum.No) ) {
-									if( cellSvte.getClef() ) {
-										this.setNbClefs(this.getNbClefs()+2);
-									}
+								if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No) ) {
 									this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 									cellSvte.setContent(OptionEnum.So);
 									this.col--;
@@ -166,7 +152,7 @@ public class PlayerImplem implements PlayerService, EntityService {
 
 	@Override
 	public void backward() {
-		Cellule cellSvte;
+		CelluleImplem cellSvte;
 		if( this.row == this.getEnv().getTresor().getI() && this.col == this.getEnv().getTresor().getJ() ) {
 			tresorFound = true ;
 			System.out.println(" Géniale ! vous avez trouvé le trésor, maintenant il faut rejoindre la sortie ");
@@ -180,10 +166,7 @@ public class PlayerImplem implements PlayerService, EntityService {
 
 			if( this.row+1 < this.getEnv().getHeight())
 				if( ! cellSvte.getNature().equals(Cell.WLL) ) 
-					if( this.env.getCellContent( cellSvte.getI(), cellSvte.getJ()).equals(OptionEnum.No) ){
-						if( cellSvte.getClef() ) {
-							this.setNbClefs(this.getNbClefs()+2);
-						}
+					if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No) ){
 						this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 						cellSvte.setContent(OptionEnum.So);
 						this.row++;
@@ -195,10 +178,7 @@ public class PlayerImplem implements PlayerService, EntityService {
 
 				if( this.row-1 >= 0)
 					if( ! cellSvte.getNature().equals(Cell.WLL) ) 
-						if( this.env.getCellContent( cellSvte.getI(), cellSvte.getJ()).equals(OptionEnum.No) ){
-							if( cellSvte.getClef() ) {
-								this.setNbClefs(this.getNbClefs()+2);
-							}
+						if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No) ){
 							this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 							cellSvte.setContent(OptionEnum.So);
 							this.row--;
@@ -209,10 +189,7 @@ public class PlayerImplem implements PlayerService, EntityService {
 
 					if( this.col-1 >= 0)
 						if( ! cellSvte.getNature().equals(Cell.WLL) ) 
-							if( this.env.getCellContent( cellSvte.getI(), cellSvte.getJ()).equals(OptionEnum.No) ){
-								if( cellSvte.getClef() ) {
-									this.setNbClefs(this.getNbClefs()+2);
-								}
+							if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No) ){
 								this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 								cellSvte.setContent(OptionEnum.So);
 								this.col--;
@@ -223,10 +200,7 @@ public class PlayerImplem implements PlayerService, EntityService {
 
 						if( this.col+1 < this.getEnv().getWidth() )
 							if( ! cellSvte.getNature().equals(Cell.WLL) ) 
-								if( this.env.getCellContent( cellSvte.getI(), cellSvte.getJ()).equals(OptionEnum.No) ){
-									if( cellSvte.getClef() ) {
-										this.setNbClefs(this.getNbClefs()+2);
-									}
+								if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No) ){
 									this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 									cellSvte.setContent(OptionEnum.So);
 									this.col++;
@@ -239,13 +213,6 @@ public class PlayerImplem implements PlayerService, EntityService {
 
 	@Override
 	public void turnL() {
-		Cellule cellCourante = this.getEnv().getCells()[this.getRow()][this.getCol()];
-		if( cellCourante.getClef() ) {
-			this.setNbClefs(this.getNbClefs()+2);
-			cellCourante.setClef(false);
-		}
-
-
 		if( this.face.equals(Face.N) ){
 			this.setFace(Face.W);
 		}else {
@@ -267,11 +234,6 @@ public class PlayerImplem implements PlayerService, EntityService {
 
 	@Override
 	public void turnR() {
-		Cellule cellCourante = this.getEnv().getCells()[this.getRow()][this.getCol()];
-		if( cellCourante.getClef() ) {
-			this.setNbClefs(this.getNbClefs()+2);
-			cellCourante.setClef(false);
-		}
 		if( this.face.equals(Face.N) ){
 			this.face=Face.E;
 		}else {
@@ -292,7 +254,7 @@ public class PlayerImplem implements PlayerService, EntityService {
 
 	@Override
 	public void strafeR() {
-		Cellule cellSvte; 
+		CelluleImplem cellSvte; 
 
 		if( this.row == this.getEnv().getTresor().getI() && this.col == this.getEnv().getTresor().getJ() ) {
 			tresorFound = true ;
@@ -340,7 +302,7 @@ public class PlayerImplem implements PlayerService, EntityService {
 
 	@Override
 	public void strafeL() {
-		Cellule cellSvte; 
+		CelluleImplem cellSvte; 
 		if( this.row == this.getEnv().getTresor().getI() && this.col == this.getEnv().getTresor().getJ() ) {
 			tresorFound = true ;
 			System.out.println(" Géniale ! vous avez trouvé le trésor, maintenant il faut rejoindre la sortie ");
@@ -386,49 +348,49 @@ public class PlayerImplem implements PlayerService, EntityService {
 		}
 	}
 
-
-
-
-
 	@Override
 	public void step () {
-		int random  = random = 1 + (int)(Math.random() * ((6 - 1) + 1));;
-		switch( random ) {
-		case 1: 
+		
+		if( this.getRow() == this.env.getTresor().getI() && this.getCol() == this.env.getTresor().getJ() ) {
+			this.tresorFound = true;
+		}
+		if( this.getRow() == this.env.getClef().getI() && this.getCol() == this.env.getClef().getJ() ) {
+			this.clefFound = true;
+		}
+		
+		switch(this.getLastCommande()){
+		case FF:
 			this.forward();
 			break;
-		case 2 :
+
+		case BB:
 			this.backward();
 			break;
-		case 3 :
-			this.turnL();
-			break;
-		case 4 :
-			this.turnR();
-			break;
-		case 5 : 
+
+		case LL:
 			this.strafeL();
-			break ;
-		case 6 : 
+			break;
+
+		case RR:
 			this.strafeR();
 			break;
-		}
 
+		case TL:
+			this.turnL();
+			break;
+
+		case TR:
+			this.turnR();
+			break;
+
+		default:
+			throw new Error("Erreur");			
+		}
 	}
 
 	@Override
 	public boolean getTresorFound() {
 		return this.tresorFound;
-	}
-
-	@Override
-	public int getNbClefs() {
-		return NbClefs;
-	}
-
-	@Override
-	public void setNbClefs(int nb) {
-		this.NbClefs = nb;
 	}
 
 
@@ -466,6 +428,22 @@ public class PlayerImplem implements PlayerService, EntityService {
 	@Override
 	public void setEnVie(boolean etat) {
 		this.enVie=etat;		
+	}
+
+	@Override
+	public Commande getLastCommande() {
+
+		return this.lastCommande;
+	}
+
+	@Override
+	public void setLastCommande(Commande lastCommande) {
+		this.lastCommande = lastCommande;
+	}
+
+	@Override
+	public boolean getClefFound() {
+		return this.clefFound;
 	}
 
 

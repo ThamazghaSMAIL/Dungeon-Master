@@ -290,14 +290,6 @@ public class EntityImplem extends MobImplem implements EntityService {
 		return this.tresorFound;
 	}
 
-	@Override
-	public int getNbClefs() {
-		return this.NbClefs;
-	}
-
-	@Override
-	public void setNbClefs(int nb) {
-		this.NbClefs = nb;
-	}
+	
 
 }
