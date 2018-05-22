@@ -1,8 +1,5 @@
 package tests;
 
-
-
-
 import static org.junit.Assert.fail;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -13,15 +10,13 @@ import org.junit.Test;
 
 import servives.MapService;
 import tools.Cell;
-import tools.InvariantError;
 import tools.PostConditionError;
 import tools.PreconditionError;
-
 
 public abstract class AbstractMapTest extends AbstractTest {
 
 
-	private MapService map;
+	protected MapService map;
 	protected AbstractMapTest() {
 		map = null;
 	}
@@ -38,7 +33,7 @@ public abstract class AbstractMapTest extends AbstractTest {
 	public abstract void beforeTests();
 
 	@After
-	public final void afterTests() {
+	public void afterTests() {
 		map = null;
 	}
 
@@ -128,8 +123,8 @@ public abstract class AbstractMapTest extends AbstractTest {
 			int h = ThreadLocalRandom.current().nextInt(1, 10);
 			int w = ThreadLocalRandom.current().nextInt(1, 10);
 			map.init(h, w);
-			fail("init_testPostPositif_1_map");	
 		}catch(PostConditionError pe){
+			fail("init_testPostPositif_1_map");	
 		}
 	}
 

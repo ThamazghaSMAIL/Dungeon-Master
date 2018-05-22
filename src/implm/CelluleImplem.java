@@ -1,6 +1,7 @@
 package implm;
 
 import servives.CelluleService;
+import servives.EnvironnementService;
 import tools.Cell;
 import tools.OptionEnum;
 import tools.OptionFood;
@@ -13,18 +14,19 @@ public class CelluleImplem implements CelluleService {
 	public int i ;
 	public int j ;
 	public Cell nature ;
-	public Cell naturePrec;
-	public OptionEnum opt = OptionEnum.No;
-	public OptionFood food = OptionFood.No;
+	public OptionEnum opt;
+	public OptionFood food ;
 	boolean clef;
+	protected EnvironnementService env;
 
 	@Override
 	public void init(int i, int j, Cell nature) {
 		this.i = i;
 		this.j = j;
 		this.nature = nature;
-		this.naturePrec=nature;
 		this.clef = false;
+		this.opt = OptionEnum.No;
+		this.food = OptionFood.No;
 	}
 	
 	@Override
@@ -67,6 +69,11 @@ public class CelluleImplem implements CelluleService {
 	@Override
 	public void setNature(Cell nature) {
 		this.nature = nature;
+	}
+
+	@Override
+	public EnvironnementService getEnv() {
+		return this.env;
 	}
 	
 }

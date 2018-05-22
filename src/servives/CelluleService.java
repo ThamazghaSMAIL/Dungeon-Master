@@ -34,4 +34,5 @@ public interface CelluleService {
 	public void setI(int i);
 	public void setJ(int j);
 	public void setNature(Cell nature) ;
+	public EnvironnementService getEnv();
 }

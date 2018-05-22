@@ -1,6 +1,7 @@
 package decorators;
 
 import servives.CelluleService;
+import servives.EnvironnementService;
 import tools.Cell;
 import tools.OptionEnum;
 import tools.OptionFood;
@@ -63,6 +64,11 @@ public class CelluleDecorator implements CelluleService{
 	@Override
 	public void init(int i, int j, Cell nature) {
 		serv.init(i, j, nature);		
+	}
+
+	@Override
+	public EnvironnementService getEnv() {
+		return serv.getEnv();
 	}
 
 }
