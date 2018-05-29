@@ -91,4 +91,21 @@
             <report format="frames" todir="${junit.output.dir}"/>
         </junitreport>
     </target>
+              	<target name="RunTests">
+
+              	        <mkdir dir="${junit.output.dir}"/>
+
+              	        <junit fork="yes" printsummary="withOutAndErr">
+
+              	            <formatter type="xml"/>
+
+              	            <test name="test.RunTests" todir="${junit.output.dir}"/>
+
+              	            <jvmarg line="-ea"/>
+
+              	            <classpath refid="Dungeon-Master.classpath"/>
+
+              	        </junit>
+
+              	</target>
 </project>
