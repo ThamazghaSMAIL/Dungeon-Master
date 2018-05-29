@@ -56,8 +56,8 @@ public abstract class AbstractCelluleTest extends AbstractTest {
 	@Test
 	public void init_testPrePositif_1(){
 		try{
-			int i = ThreadLocalRandom.current().nextInt(0,cellule.getEnv().getHeight()-1);
-			int j = ThreadLocalRandom.current().nextInt(0,cellule.getEnv().getWidth()-1);
+			int i = ThreadLocalRandom.current().nextInt(0,10);
+			int j = ThreadLocalRandom.current().nextInt(0,10);
 			Cell nature = getNatureRandom();
 			cellule.init(i, j, nature,env);
 		}catch(PreconditionError pe){
@@ -152,8 +152,8 @@ public abstract class AbstractCelluleTest extends AbstractTest {
 	@Test
 	public void init_testPostNegatif_1(){
 		try{
-			int i = ThreadLocalRandom.current().nextInt(0,cellule.getEnv().getHeight()-1);
-			int j = ThreadLocalRandom.current().nextInt(0,cellule.getEnv().getWidth()-1);
+			int i = ThreadLocalRandom.current().nextInt(0,10);
+			int j = ThreadLocalRandom.current().nextInt(0,10);
 			Cell nature = getNatureRandom();
 			cellule.init(i, j, nature,env);
 			fail("init_testPreNegatif_6_cellule");

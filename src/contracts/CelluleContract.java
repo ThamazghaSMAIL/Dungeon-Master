@@ -1,12 +1,8 @@
 package contracts;
 
 import decorators.CelluleDecorator;
-import implm.CelluleImplem;
 import servives.CelluleService;
 import tools.Cell;
-import tools.Face;
-import tools.InvariantError;
-import tools.OptionEnum;
 import tools.PostConditionError;
 
 public class CelluleContract extends CelluleDecorator{
@@ -24,7 +20,6 @@ public class CelluleContract extends CelluleDecorator{
 		/*	[SetNature]
 				CellNature(SetNature(M,x,y,Na),x,y) = Na
 				forall u,v in int*int , u ! = x or v ! = y implies CellNature(SetNature(M,x,y),u,v) = CellNature(M,u,v)*/
-		Cell cPre = super.getNature(); 
 		Cell[][] cellPre = new Cell[super.getEnv().getHeight()][super.getEnv().getWidth()] ;
 
 		for (int i1 = 0; i1 <super.getEnv().getHeight(); i1++ ) 

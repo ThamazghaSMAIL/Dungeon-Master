@@ -4,7 +4,6 @@ import decorators.CombatDecorator;
 import servives.CowService;
 import servives.EntityService;
 import servives.EnvironnementService;
-import tools.Face;
 import tools.InvariantError;
 import tools.PostConditionError;
 import tools.PreconditionError;
