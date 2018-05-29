@@ -178,4 +178,20 @@ public class PlayerDecorator implements PlayerService{
 	}
 
 
+
+
+	@Override
+	public Cell getNatureP(int i, int j) {
+		return serv.getNatureP(i, j);
+	}
+
+
+
+
+	@Override
+	public Cell getContentP(int i, int j) {
+		return serv.getContentP(i, j);
+	}
+
+
 }

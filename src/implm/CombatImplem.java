@@ -2,6 +2,7 @@ package implm;
 
 import servives.CombatService;
 import servives.EntityService;
+import servives.EnvironnementService;
 import tools.Face;
 import tools.OptionEnum;
 import tools.OptionFood;
@@ -12,15 +13,17 @@ public class CombatImplem implements CombatService {
 	protected boolean debutCombat;
 	protected boolean Finie;
 
+	protected EnvironnementService env;
 	public CombatImplem(){
 		this.Finie = false;
 	}
 
 	@Override
-	public void init (EntityService player ) {
+	public void init (EntityService player ,EnvironnementService env ) {
 		this.player = player ;
 		this.Finie = false;
 		this.debutCombat = false;
+		this.env = env ;
 	}
 
 	@Override
@@ -71,6 +74,7 @@ public class CombatImplem implements CombatService {
 	
 	@Override
 	public boolean proche(EntityService player, EntityService vache) {
+		if( this.debutCombat )
 		if( player.getRow() == vache.getRow() )
 			if( Math.abs(player.getCol() - vache.getCol()) == 1 )
 				return true;
@@ -98,5 +102,22 @@ public class CombatImplem implements CombatService {
 		this.vache = vache;
 		this.debutCombat = true;
 	}
+	@Override
+	public EnvironnementService getEnv() {
+		return this.env;
+	}
+	@Override
+	public void setEnv(EnvironnementService env) {
+		this.env = env;
+	}
 
+	@Override
+	public boolean isFini() {
+		return this.Finie;
+	}
+
+	@Override
+	public boolean debutCombat() {
+		return this.debutCombat;
+	}
 }

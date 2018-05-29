@@ -1,47 +1,58 @@
-//package contracts;
-//
-//import decorators.CelluleDecorator;
-//import implm.CelluleImplem;
-//import tools.Cell;
-//import tools.Face;
-//import tools.InvariantError;
-//import tools.OptionEnum;
-//
-//public class CelluleContract extends CelluleDecorator{
-//
-////	@Override
-////	public void setNature(int i, int j , Cell c) {
-////		/*	[SetNature]
-////				CellNature(SetNature(M,x,y,Na),x,y) = Na
-////				forall u,v in int 2 , u 6 = x or v 6 = y implies CellNature(SetNature(M,x,y),u,v) = CellNature(M,u,v)*/
-////		Cell cPre = getCellNature(i, j); 
-////		CelluleImplem[][] cellPre = null ;
-////
-////		for (int i1 = 0; i1 <getHeight(); i1++ ) 
-////			for (int j1 = 0; j1 < getWidth() ; j1++ ) {
-////				cellPre[i1][j1] = getCells()[i1][j1];
-////			}
-////
-////		this.setNature(i, j, c);
-////
-////
-////		if ( getCellNature(i, j) != c) {
-////			throw new InvariantError(" erreur de changement de nature ");
-////		}
-////
-////		for (int i1 = 0; i1 <getHeight(); i1++ ) 
-////			for (int j1 = 0; j1 < getWidth() ; j1++ ) {
-////				if( getCells()[i1][j1].getNature() != cellPre[i1][j1].getNature() ) {
-////					throw new InvariantError(" erreurs état incoherent ");
-////				}
-////			}
-////	}
-//
-//	
-//	
-//	
+package contracts;
+
+import decorators.CelluleDecorator;
+import implm.CelluleImplem;
+import servives.CelluleService;
+import tools.Cell;
+import tools.Face;
+import tools.InvariantError;
+import tools.OptionEnum;
+import tools.PostConditionError;
+
+public class CelluleContract extends CelluleDecorator{
+	CelluleService serv;
+	
+	public CelluleContract(CelluleService serv) {
+		super();
+		this.serv = serv;
+	}
+	public void checkInvariant(){
+		
+	}
+	@Override
+	public void setNature(Cell c) {
+		/*	[SetNature]
+				CellNature(SetNature(M,x,y,Na),x,y) = Na
+				forall u,v in int*int , u ! = x or v ! = y implies CellNature(SetNature(M,x,y),u,v) = CellNature(M,u,v)*/
+		Cell cPre = super.getNature(); 
+		Cell[][] cellPre = new Cell[super.getEnv().getHeight()][super.getEnv().getWidth()] ;
+
+		for (int i1 = 0; i1 <super.getEnv().getHeight(); i1++ ) 
+			for (int j1 = 0; j1 < super.getEnv().getWidth() ; j1++ ) {
+				cellPre[i1][j1] = super.getEnv().getCells()[i1][j1].getNature();
+			}
+		
+		checkInvariant();
+		super.setNature(c);
+		checkInvariant();
+		
+		if ( super.getNature().equals(c) ) {
+			throw new PostConditionError(" erreur de changement de nature -CelluleContrat");
+		}
+
+		for (int i1 = 0; i1 <super.getEnv().getHeight(); i1++ ) 
+			for (int j1 = 0; j1 < super.getEnv().getWidth() ; j1++ ) {
+				if( ! super.getEnv().getCells()[i1][j1].getNature().equals(cellPre[i1][j1]) ) {
+					throw new PostConditionError(" erreurs état incoherent -CelluleContrat");
+				}
+			}
+	}
+
+}
+	
+	
 //	@Override
-//	public OptionEnum getContent(int u, int v) {
+//	public OptionEnum getContent() {
 //		//pre Content(P,x,y) requires x ∈ {-1,0,1}and y ∈ {-1,+3}
 //		checkInvariant();
 //		if( u != -1 && u != 0 && u != 1 )

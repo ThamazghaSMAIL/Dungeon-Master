@@ -1,0 +1,25 @@
+\begin{tabular}{rl}
+\textbf{Service}: & \textrm{Cellule}  \\
+\textbf{Types}: & \textrm{bool}, \textrm{int}, \textrm{Cell}, OptionContent{No,So}, OptionFood{Fo,No}  \\
+\textbf{Observators}: & \textbf{const}~\texttt{i}: \textrm{[Cellule]} $\rightarrow$ \textrm{int} \\
+
+& \textbf{const}~\texttt{j}: \textrm{[Cellule]} $\rightarrow$ \textrm{int} \\
+& \texttt{getNature}: \textrm{[Cellule]} $\rightarrow$ \textrm{Cell} \\
+& \texttt{getContent}: \textrm{[Cellule]} $\rightarrow$ \textrm{OptionContent} \\
+& \texttt{ContainsFood}:
+\textrm{[Cellule]} $\rightarrow$ \textrm{OptionFood} \\
+
+\textbf{Constructors}: & \texttt{init}: \textrm{int} $\times$ \textrm{int} $\times$ \textrm{Cell} $\rightarrow$ \textrm{[Cellule]} \\
+\textbf{Operators}: & \texttt{setContent}: \textrm{[Cellule]}$\times$ \textrm{OptionContent} $\rightarrow$ \textrm{[Cellule]} \\
+&\texttt{setFood}: \textrm{[Cellule]} $\rightarrow$ \textrm{[Cellule]} \\
+& \quad\quad \textbf{pre}~ \texttt{setFood(C)}~\textbf{requires}~ ContainsFood(C) = No\\
+& \texttt{setNature} : \textrm{[Cellule]} $\times$ \textrm{Cell} $\rightarrow$ \textrm{[Cellule]} \\  
+
+       \textbf{Observation}: \\
+       $[$invariant$]$: & $\top$ \\
+       $[$init$]$: & \texttt{getI(init(i,j,c))} = \texttt{i} \\
+       & \texttt{getJ(init(i,j,c))} = \texttt{j}\\
+       & \texttt{getNature(init(i,j,c))} = \texttt{c}\\ 
+       $[$setContent$]$: & \texttt{getContent}(\texttt{setContent(C,content)}) = \textbf{content} \\
+$[$setNature$]$: & \texttt{getNature}(\texttt{setNature(C,cell)} = \textbf{cell} \\
+\end{tabular}

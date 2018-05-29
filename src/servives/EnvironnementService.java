@@ -2,9 +2,7 @@ package servives;
 
 import java.util.List;
 
-import tools.Cell;
 import implm.CelluleImplem;
-import tools.OptionEnum;
 
 public interface EnvironnementService extends  MapService {
 

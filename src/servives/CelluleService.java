@@ -25,14 +25,20 @@ public interface CelluleService {
 	 * post : getJ( init(i,j,nat) )==j
 	 * post : getNature( init(i,j,nat) )==nat
 	 */
-	public void init(int i, int j, Cell nature);
+	public void init(int i, int j, Cell nature,EnvironnementService env);
 	
 	/*Operators*/
 	
-	public void setContent(OptionEnum opt) ;
+	//public void init(int i, int j, Cell nature,MapService map);
+	
+	public void setContent(OptionEnum opt);
 	public void setFood(OptionFood food) ;
-	public void setI(int i);
-	public void setJ(int j);
+	
+	/**
+	 * post : CellNature(SetNature(M,x,y,Na),x,y) = Na
+	 * forall u,v in int*int , u != x or v != y implies CellNature(SetNature(M,x,y),u,v) = CellNature(M,u,v)
+	 */
+		
 	public void setNature(Cell nature) ;
 	public EnvironnementService getEnv();
 }

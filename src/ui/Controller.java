@@ -269,7 +269,7 @@ public class Controller extends Application {
 			CelluleImplem cellCourante;
 			CelluleImplem cellSvte;
 			StackPane stacksCourante = stacks[player.getRow()][player.getCol()];
-			
+
 
 			@Override
 			public void handle(KeyEvent event) {
@@ -320,7 +320,7 @@ public class Controller extends Application {
 							changements(cellCourante.getI(),cellCourante.getJ(),cellSvte.getI(),cellSvte.getJ());
 							player.setLastCommande(null);
 						}else {
-							
+
 						}
 					}else {
 						changements(cellCourante.getI(),cellCourante.getJ(),cellSvte.getI(),cellSvte.getJ());
@@ -375,7 +375,8 @@ public class Controller extends Application {
 							}
 							System.out.println("proche ? : "+combat.proche(player, c));
 							if(combat.proche(player,c) ) {
-								moteurJeuImplem.getCombat().setVache(c);
+								if(moteurJeuImplem.getCombat().getVache()==null )
+									moteurJeuImplem.getCombat().setVache(c);
 								if( event.getCode().equals(KeyCode.ENTER) ) {
 									//attaquer dans sa direction
 									System.out.println("le player a frappé");
@@ -463,6 +464,7 @@ public class Controller extends Application {
 				}
 			}
 		});
+		//stacks[0][0].setVisible(false);
 		borderPaneRoot.setBottom(footer);
 		borderPaneRoot.setCenter(tilePane);
 		primaryStage.setScene(scene); 

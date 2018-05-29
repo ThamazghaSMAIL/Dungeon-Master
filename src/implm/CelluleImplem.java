@@ -20,13 +20,14 @@ public class CelluleImplem implements CelluleService {
 	protected EnvironnementService env;
 
 	@Override
-	public void init(int i, int j, Cell nature) {
+	public void init(int i, int j, Cell nature , EnvironnementService env) {
 		this.i = i;
 		this.j = j;
 		this.nature = nature;
 		this.clef = false;
 		this.opt = OptionEnum.No;
 		this.food = OptionFood.No;
+		this.env = env;
 	}
 	
 	@Override
@@ -50,18 +51,12 @@ public class CelluleImplem implements CelluleService {
 		return i;
 	}
 	
-	@Override
-	public void setI(int i) {
-		this.i = i;
-	}
+	
 	@Override
 	public int getJ() {
 		return j;
 	}
-	@Override
-	public void setJ(int j) {
-		this.j = j;
-	}
+	
 	@Override
 	public Cell getNature() {
 		return nature;

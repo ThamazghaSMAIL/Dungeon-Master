@@ -5,12 +5,12 @@ import servives.TresorService;
 
 public class TresorDecorator implements TresorService {
 	TresorService serv; 
-	
+
 	public TresorDecorator(TresorService serv) {
 		super();
 		this.serv = serv;
 	}
-	
+
 	@Override
 	public int getI() {
 		return serv.getI();
@@ -31,6 +31,16 @@ public class TresorDecorator implements TresorService {
 		serv.init(env, i, j);
 	}
 
-	
+	@Override
+	public boolean getTrouve() {
+		return serv.getTrouve();
+	}
+
+	@Override
+	public void setTrouve(boolean trouve) {
+		serv.setTrouve(trouve);		
+	}
+
+
 
 }

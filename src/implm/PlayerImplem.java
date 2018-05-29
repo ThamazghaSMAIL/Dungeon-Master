@@ -21,11 +21,11 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 	protected boolean enVie;
 	protected Commande lastCommande = null;
 
-	
+
 	protected boolean tresorFound = false;//rajouter les spec sur le trésor
 	protected boolean clefFound = false;//rajouter la cond dans player : que clefound = false initialement
-	
-	
+
+
 	public  PlayerImplem() {
 	}
 
@@ -40,22 +40,29 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 	}
 
 
-	
+
 
 	@Override
-	public boolean Viewable(int row, int col) {
-		if( row < -1 || row > 1 || col >3 || col < -1) {
+	public boolean Viewable(int u, int v) {
+		if( row < -1 || row > 1 || col >3 || col < -1) 
 			return false;
-		} else {
-			//WALL, DWC, DNC
-			if( this.env.getCells()[row][col].getContent().equals(Cell.WLL) || 
-					this.env.getCells()[row][col].getContent().equals(Cell.DNC) ||
-					this.env.getCells()[row][col].getContent().equals(Cell.DWC)) {
-				return false;
-			}else {
-				return true;
-			}
+
+		switch(this.getFace()){
+		case N:
+			return getCol()+u<getEnv().getWidth() &&  getCol()+u>=0 && getRow()+v >=0 && getRow()+v<getEnv().getHeight();
+		case S:
+			return getCol()-u<getEnv().getWidth() &&  getCol()-u>=0 && getRow()-v >=0 && getRow()-v<getEnv().getHeight();
+
+		case E:
+			return getCol()+v<getEnv().getWidth() &&  getCol()+v>=0 && getRow()-u >=0 && getRow()-u<getEnv().getHeight();
+
+		case W:
+			return getCol()-v<getEnv().getWidth() &&  getCol()-v>=0 && getRow()+u >=0 && getRow()+u<getEnv().getHeight();
+
+		default:
+			System.out.println("erreur");
 		}
+		return false;
 	}
 
 
@@ -85,6 +92,7 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 		CelluleImplem cellSvte = null;
 		if( this.row == this.getEnv().getTresor().getI() && this.col == this.getEnv().getTresor().getJ() ) {
 			tresorFound = true ;
+			this.env.getTresor().setTrouve(true);
 			System.out.println(" Géniale ! vous avez trouvé le trésor, maintenant il faut rejoindre la sortie ");
 		}
 
@@ -94,7 +102,7 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 				if( ! cellSvte.getNature().equals(Cell.WLL) ) {
 					if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No)){
 						if( cellSvte.getI() == env.getClef().getI() &&  cellSvte.getJ() == env.getClef().getJ()) {
-							
+
 						}
 						this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 						cellSvte.setContent(OptionEnum.So);
@@ -350,14 +358,14 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 
 	@Override
 	public void step () {
-		
+
 		if( this.getRow() == this.env.getTresor().getI() && this.getCol() == this.env.getTresor().getJ() ) {
 			this.tresorFound = true;
 		}
 		if( this.getRow() == this.env.getClef().getI() && this.getCol() == this.env.getClef().getJ() ) {
 			this.clefFound = true;
 		}
-		
+
 		switch(this.getLastCommande()){
 		case FF:
 			this.forward();
@@ -444,6 +452,26 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 	@Override
 	public boolean getClefFound() {
 		return this.clefFound;
+	}
+
+	@Override
+	public Cell getNatureP(int i , int j ) {
+		if( i==0 || i==1 || i==-1 )
+			if( j>= -1 && i<=3 ) 
+				if( this.getEnv().getCells()[this.getRow()+i][this.getCol()+j] != null ) {
+					return this.getEnv().getCells()[this.getRow()+i][this.getCol()+j].getNature();
+				}
+		return null;
+	}
+
+	@Override
+	public Cell getContentP(int i , int j ) {
+		if( i==0 || i==1 || i==-1 )
+			if( j>= -1 && i<=3 ) 
+				if( this.getEnv().getCells()[this.getRow()+i][this.getCol()+j] != null ) {
+					return this.getEnv().getCells()[this.getRow()+i][this.getCol()+j].getNature();
+				}
+		return null;
 	}
 
 

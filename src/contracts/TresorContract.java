@@ -22,13 +22,15 @@ public class TresorContract extends TresorDecorator {
 		if( i < 0 || j <0 || i >= env.getHeight() || j >= env.getWidth() ) {
 			throw new PreconditionError("le tresor peut pas être initialisé");
 		}
+		if( i== super.getEnv().getEntities().get(0).getRow() || j == super.getEnv().getEntities().get(0).getCol())
+			throw new PreconditionError("erreur tresorcontrat");
 		
 		super.init(env, i, j);
 		
-		if( this.getI() != i || this.getJ() != j || this.getEnv() != env ) {
+		if( super.getI() != i || super.getJ() != j || ! super.getEnv().equals(env) || super.getTrouve() ) {
 			throw new PostConditionError("Erreur lors de l'initialisation du trésor");
 		}
-		
+		checkInvariant();
 	}
 
 }

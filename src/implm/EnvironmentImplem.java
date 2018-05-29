@@ -90,7 +90,7 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 		int random ;
 
 		this.cells[height-1][width-2] = new CelluleImplem();
-		this.cells[height-1][width-2].init(height-1, width-2, Cell.EMP);
+		this.cells[height-1][width-2].init(height-1, width-2, Cell.EMP,this);
 		this.cells[height-1][width-2].setContent(OptionEnum.So);
 		PlayerImplem player =new PlayerImplem();
 		player.init(height-1, width-2 , 3 , Face.N  , this );
@@ -103,32 +103,32 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 				}
 				if( i ==0 && j == 0 ) {
 					this.cells[i][j] = new CelluleImplem();
-					this.cells[i][j].init( i, j , Cell.OUT);
+					this.cells[i][j].init( i, j , Cell.OUT,this);
 					this.cells[i][j].setContent(OptionEnum.No);
 					continue;
 				}
 
 				if( i ==height-1 && j == width-1 ) {
 					this.cells[i][j] = new CelluleImplem();
-					this.cells[i][j].init(i, j, Cell.IN);
+					this.cells[i][j].init(i, j, Cell.IN,this);
 					this.cells[i][j].setContent(OptionEnum.No);
 					continue;
 				}
 				if(i<2 && j<2) {
 					this.cells[i][j] = new CelluleImplem();
-					this.cells[i][j].init(i, j,Cell.EMP);
+					this.cells[i][j].init(i, j,Cell.EMP,this);
 					this.cells[i][j].setContent(OptionEnum.No);
 					continue;
 				}
 				if(i>height-3 && j>width-3) {
 					this.cells[i][j] = new CelluleImplem();
-					this.cells[i][j].init( i, j , Cell.EMP);
+					this.cells[i][j].init( i, j , Cell.EMP,this);
 					this.cells[i][j].setContent(OptionEnum.No);
 					continue;
 				}
 				if(i==height-1 || j==width-1 || i==0 || j==0) {
 					this.cells[i][j] = new CelluleImplem( );
-					this.cells[i][j].init(i, j , Cell.WLL);
+					this.cells[i][j].init(i, j , Cell.WLL,this);
 					this.cells[i][j].setContent(OptionEnum.No);
 					continue;
 				}
@@ -139,20 +139,20 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 					if(contient (i+1,j,Cell.WLL) && contient(i,j-1,Cell.EMP))
 					{
 						this.cells[i][j] = new CelluleImplem();
-						this.cells[i][j].init(i,j,Cell.DWO);
+						this.cells[i][j].init(i,j,Cell.DWO,this);
 						this.cells[i][j].setContent(OptionEnum.No);
 
 						this.cells[i][j+1] = new CelluleImplem();
-						this.cells[i][j+1].init(i,j+1,Cell.EMP);
+						this.cells[i][j+1].init(i,j+1,Cell.EMP,this);
 						this.cells[i][j+1].setContent(OptionEnum.No);
 
 						this.cells[i+1][j] = new CelluleImplem();
-						this.cells[i+1][j].init(i+1,j,Cell.WLL);
+						this.cells[i+1][j].init(i+1,j,Cell.WLL,this);
 						this.cells[i+1][j].setContent(OptionEnum.No);
 						continue;
 					}else {
 						this.cells[i][j] = new CelluleImplem();
-						this.cells[i][j].init( i, j , Cell.EMP);
+						this.cells[i][j].init( i, j , Cell.EMP,this);
 						this.cells[i][j].setContent(OptionEnum.No);
 						continue;
 					}
@@ -161,21 +161,21 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 					if( contient (i-1, j,Cell.WLL) && contient(i, j-1, Cell.EMP) )
 					{
 						this.cells[i][j] = new CelluleImplem();
-						this.cells[i][j].init( i, j , Cell.DWC);
+						this.cells[i][j].init( i, j , Cell.DWC,this);
 						this.cells[i][j].setContent(OptionEnum.No);
 
 						this.cells[i][j+1] = new CelluleImplem();
-						this.cells[i][j+1].init( i, j+1 , Cell.EMP);
+						this.cells[i][j+1].init( i, j+1 , Cell.EMP,this);
 						this.cells[i][j+1].setContent(OptionEnum.No);
 
 						this.cells[i+1][j] = new CelluleImplem();	
-						this.cells[i+1][j].init( i+1, j , Cell.WLL);
+						this.cells[i+1][j].init( i+1, j , Cell.WLL,this);
 						this.cells[i+1][j].setContent(OptionEnum.No);
 
 						continue;
 					}else {
 						this.cells[i][j] = new CelluleImplem();
-						this.cells[i][j].init( i, j , Cell.EMP);
+						this.cells[i][j].init( i, j , Cell.EMP,this);
 						this.cells[i][j].setContent(OptionEnum.No);
 						continue;
 					}
@@ -184,15 +184,15 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 					if( contient (i-1, j,Cell.EMP) && contient(i, j-1, Cell.WLL) )
 					{
 						this.cells[i][j] = new CelluleImplem();
-						this.cells[i][j] .init( i, j , Cell.DNC);
+						this.cells[i][j] .init( i, j , Cell.DNC,this);
 						this.cells[i][j].setContent(OptionEnum.No);
 
 						this.cells[i][j+1] = new CelluleImplem();
-						this.cells[i][j+1].init( i, j+1 , Cell.WLL);
+						this.cells[i][j+1].init( i, j+1 , Cell.WLL,this);
 						this.cells[i][j+1].setContent(OptionEnum.No);
 
 						this.cells[i+1][j] = new CelluleImplem( );
-						this.cells[i+1][j].init(i+1, j , Cell.EMP);
+						this.cells[i+1][j].init(i+1, j , Cell.EMP,this);
 						this.cells[i+1][j].setContent(OptionEnum.No);
 
 						/*this.cells[i+1][j].setNbClefCell(this.cells[i+1][j].getNbClefCell()+1);
@@ -200,7 +200,7 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 						continue;
 					}else {
 						this.cells[i][j] = new CelluleImplem();
-						this.cells[i][j].init( i, j , Cell.WLL);
+						this.cells[i][j].init( i, j , Cell.WLL,this);
 						this.cells[i][j].setContent(OptionEnum.No);
 						continue;
 					}
@@ -209,21 +209,21 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 					if( contient (i-1, j,Cell.EMP) && contient(i, j-1, Cell.WLL) )
 					{
 						this.cells[i][j] = new CelluleImplem();
-						this.cells[i][j].init( i, j , Cell.DNO);
+						this.cells[i][j].init( i, j , Cell.DNO,this);
 						this.cells[i][j].setContent(OptionEnum.No);
 
 						this.cells[i][j+1] = new CelluleImplem();
-						this.cells[i][j+1].init( i, j+1 , Cell.WLL);
+						this.cells[i][j+1].init( i, j+1 , Cell.WLL,this);
 						this.cells[i][j+1].setContent(OptionEnum.No);
 
 						this.cells[i+1][j] = new CelluleImplem();
-						this.cells[i+1][j].init( i+1, j , Cell.EMP);
+						this.cells[i+1][j].init( i+1, j , Cell.EMP,this);
 						this.cells[i+1][j].setContent(OptionEnum.No);
 
 						continue;
 					}else {
 						this.cells[i][j] = new CelluleImplem();
-						this.cells[i][j].init( i, j , Cell.WLL);
+						this.cells[i][j].init( i, j , Cell.WLL,this);
 						this.cells[i][j].setContent(OptionEnum.No);
 						continue;
 					}				
@@ -319,7 +319,8 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 
 	public boolean isReachable_EMP_DNO(CelluleImplem depart, CelluleImplem arrivé, List<CelluleImplem> dejaVisites) {
 
-		if( depart.getNature().equals(Cell.WLL) || depart.getNature().equals(Cell.DNC) )
+		if( depart.getNature().equals(Cell.WLL) || depart.getNature().equals(Cell.DNC)
+				|| depart.getNature().equals(Cell.DWC) )
 			return false;
 
 		if(depart.equals(arrivé))

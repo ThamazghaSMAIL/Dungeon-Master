@@ -5,12 +5,14 @@ public interface CombatService {
 	
 	/**
 	 * pre player != null && env.getentities().size() > 1
+	 * il y a le player dans entities et au moins un monstre
 	 * @param player
 	 * @param vache
 	 */
-	public void init ( EntityService player );
+	public void init ( EntityService player , EnvironnementService env );
 	/**
-	 * post : 
+	 * post : getEnv(init(p,e))=e
+	 * 		  getPlayer(init(p,e))=p
 	 */
 	
 	
@@ -18,6 +20,7 @@ public interface CombatService {
 	
 	/**
 	 * PlayerfrappeMonstre ( e1,  e2 ) require proche(e1,e2)
+	 * and Entity :: getHp(e1) > 0 && Entity :: getHp(e2) > 0
 	 * @param e1
 	 * @param e2
 	 */
@@ -50,6 +53,7 @@ public interface CombatService {
 	
 	
 	/**
+	 * touché(p,m) requires debutCombat = true
 	 * 
 	 * @param player
 	 * @param monstre
@@ -61,16 +65,27 @@ public interface CombatService {
 	 */
 	public EntityService getPlayer();
 	
+	
+
+	/**
+	 * vache != null
+	 * @param player
+	 */
+	public EntityService getVache();
+	/**
+	 * vache != null
+	 * @param player
+	 */
+	public void setVache(EntityService vache);
 	/**
 	 * player != null
 	 * @param player
 	 */
 	public void setPlayer(EntityService player);
-
-	public EntityService getVache();
-	
-	public void setVache(EntityService vache);
 	
 	
-	
+	public EnvironnementService getEnv() ;
+	public void setEnv(EnvironnementService env);
+	public boolean isFini();
+	public boolean debutCombat();
 }

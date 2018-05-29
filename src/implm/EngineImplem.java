@@ -24,8 +24,9 @@ public class EngineImplem implements EngineService {
 			this.envi.init(this.h,this.w); 
 		}
 		while( ! envi.isReachable(envi.getHeight()-1, envi.getWidth()-1,0,0));
+		
 		this.combat = new CombatImplem();
-		combat.init(this.envi.getEntities().get(0));
+		combat.init(this.envi.getEntities().get(0),this.envi);
 	}
 
 	@Override

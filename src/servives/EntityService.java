@@ -8,7 +8,6 @@ public interface EntityService {
 	public void setEnv(EnvironnementService env);
 
 
-
 	public void init(int row, int col, int hp , Face face , EnvironnementService env);
 	public void forward();
 	public void backward();

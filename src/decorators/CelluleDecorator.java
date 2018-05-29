@@ -35,20 +35,14 @@ public class CelluleDecorator implements CelluleService{
 		return serv.getI();
 	}
 
-	@Override
-	public void setI(int i) {
-		serv.setI(i);		
-	}
+	
 
 	@Override
 	public int getJ() {
 		return serv.getJ();
 	}
 
-	@Override
-	public void setJ(int j) {
-		serv.setJ(j);		
-	}
+	
 
 	@Override
 	public Cell getNature() {
@@ -62,8 +56,8 @@ public class CelluleDecorator implements CelluleService{
 
 
 	@Override
-	public void init(int i, int j, Cell nature) {
-		serv.init(i, j, nature);		
+	public void init(int i, int j, Cell nature,EnvironnementService env) {
+		serv.init(i, j, nature,env);		
 	}
 
 	@Override
