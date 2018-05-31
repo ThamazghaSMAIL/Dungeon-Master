@@ -309,6 +309,7 @@ public class Controller extends Application {
 
 				if( player.getLastCommande().equals(Commande.FF) || player.getLastCommande().equals(Commande.BB)||
 						player.getLastCommande().equals(Commande.LL) || player.getLastCommande().equals(Commande.RR)) {
+
 					player.step();
 
 					stacksSvte = stacks[player.getRow()][player.getCol()];
@@ -318,7 +319,7 @@ public class Controller extends Application {
 					if( cellSvte.getNature().equals(Cell.DNC) || cellSvte.getNature().equals(Cell.DWC)) {
 						if( player.getClefFound()) {
 							changements(cellCourante.getI(),cellCourante.getJ(),cellSvte.getI(),cellSvte.getJ());
-							player.setLastCommande(null);
+							player.setLastCommande(Commande.NO);
 						}else {
 
 						}
@@ -329,11 +330,11 @@ public class Controller extends Application {
 				}else {
 					if(player.getLastCommande().equals(Commande.TL) ) {
 						turnLchangements(player.getFace());
-						player.setLastCommande(null);
+						player.setLastCommande(Commande.NO);
 					}else {
 						if(player.getLastCommande().equals(Commande.TR)) {
 							turnRchangements(player.getFace());
-							player.setLastCommande(null);
+							player.setLastCommande(Commande.NO);
 						}else {
 							//le player a frapper dans le vide--> ça n'apporte aucun changement 
 						}
@@ -342,7 +343,7 @@ public class Controller extends Application {
 
 				for( EntityService c : env.getEntities() ) {
 					if( c instanceof CowService ) 
-						if( c.isEnVie() ){
+						if( c.isEnVie() ) {
 							Node p = stacks[c.getRow()][c.getCol()].getChildren().remove(stacks[c.getRow()][c.getCol()].getChildren().size()-1);
 							int ipre = c.getRow() , jpre = c.getCol();
 							c.step();
@@ -369,21 +370,16 @@ public class Controller extends Application {
 									if( ((CowService) c).getFrappe() ) {
 										moteurJeuImplem.getCombat().VachefrappePlayer();
 										((CowService) c).setFrappe(false);
-
-										System.out.println("le monstre a frappé");
 									}
 							}
-							System.out.println("proche ? : "+combat.proche(player, c));
 							if(combat.proche(player,c) ) {
 								if(moteurJeuImplem.getCombat().getVache()==null )
 									moteurJeuImplem.getCombat().setVache(c);
 								if( event.getCode().equals(KeyCode.ENTER) ) {
 									//attaquer dans sa direction
-									System.out.println("le player a frappé");
 									changementsEnter(c);
 								}
 							}
-							System.out.println("le monstre est en vie ?"+c.isEnVie());
 						}
 				}
 				force.setText( Integer.toString(player.getHp()) );
@@ -393,13 +389,13 @@ public class Controller extends Application {
 
 			public void changementsEnter(EntityService c) {
 				moteurJeuImplem.getCombat().PlayerfrappeMonstre();
-				if(  c.isEnVie() == false ) {
+				if( ! c.isEnVie() ) {
 					stacks[c.getRow()][c.getCol()].getChildren().remove(stacks[c.getRow()][c.getCol()].getChildren().size()-1);
 					ImageView d = new ImageView(donut);
 					d.setFitHeight(tailleCase);
 					d.setFitWidth(tailleCase);
 					stacks[c.getRow()][c.getCol()].getChildren().add(d);
-					System.out.println("la pos du donut : x="+c.getRow()+" y = "+c.getCol());
+					cells[c.getRow()][c.getCol()].setFood(OptionFood.Fo);
 				}
 			}
 
@@ -447,7 +443,6 @@ public class Controller extends Application {
 		});
 
 		quitter.setOnAction(new EventHandler<ActionEvent>() { 
-
 			@Override 
 			public void handle(ActionEvent actionEvent) { 
 				primaryStage.close();
@@ -482,46 +477,47 @@ public class Controller extends Application {
 
 		StackPane stacksCourante = stacks[iAvant][jAvant], stacksSvte= stacks[iApres][jApres];
 		CelluleImplem cellCourante = cells[iAvant][jAvant],cellSvte= cells[iApres][jApres];
-		System.out.println("yaunmob cellsvte"+cellSvte.getContent());
 		if( ! cellSvte.getNature().equals(Cell.WLL) && ! env.YaUnMob(cellSvte.getI(), cellSvte.getJ())) {
 
 			if( cellCourante.getNature().equals(Cell.EMP) && cellSvte.getNature().equals(Cell.EMP)) {
 
-				if(env.getClef().getI()==iApres && env.getClef().getJ()==jApres){//si y a une clé la manger 
+				if(env.getClef().getI()==iApres && env.getClef().getJ()==jApres && ! player.getClefFound() ){//si y a une clé la manger 
 					stacksSvte.getChildren().remove(stacksSvte.getChildren().size()-1);
 				}
-				if( iApres == env.getTresor().getI() && jApres == env.getTresor().getJ() ) {
+				if( iApres == env.getTresor().getI() && jApres == env.getTresor().getJ() && ! player.getTresorFound() ) {
 					stacksSvte.getChildren().remove(stacksSvte.getChildren().size()-1);
 				}
+
 
 				if( cellSvte.ContainsFood().equals(OptionFood.Fo) ) {
-					stacksSvte.getChildren().remove(stacksCourante.getChildren().size()-1);
+					stacksSvte.getChildren().remove(stacksSvte.getChildren().size()-1);
 					player.setHp(player.getHp() + 1);
+					cellSvte.setFood(OptionFood.No);
 				}
-
 
 				Node p = stacksCourante.getChildren().remove(stacksCourante.getChildren().size()-1);// le player
 				stacksSvte.getChildren().add(p);
 			}else {
-
 				if( cellCourante.getNature().equals(Cell.EMP) && cellSvte.getNature().equals(Cell.DNC)) {
-					stacksSvte.getChildren().remove(stacksSvte.getChildren().size()-1);//supp la porte fermee
-					stacksSvte.getChildren().add(po);//la porte ouverte
-					Node p = stacksCourante.getChildren().remove(stacksCourante.getChildren().size()-1);//supp le joueur
-					stacksSvte.getChildren().add(p);//add le joueur
-
-					env.OpenDoor(cellSvte.getI(), cellSvte.getJ());//ca marche
-
-				}else {
-					if( cellCourante.getNature().equals(Cell.EMP) && cellSvte.getNature().equals(Cell.DWC)) {
-
+					if( player.getClefFound()){
 						stacksSvte.getChildren().remove(stacksSvte.getChildren().size()-1);//supp la porte fermee
 						stacksSvte.getChildren().add(po);//la porte ouverte
-						stacksSvte.getChildren().get(stacksSvte.getChildren().size()-1).setRotate(90);
 						Node p = stacksCourante.getChildren().remove(stacksCourante.getChildren().size()-1);//supp le joueur
 						stacksSvte.getChildren().add(p);//add le joueur
 
-						env.OpenDoor(cellSvte.getI(), cellSvte.getJ());
+						env.OpenDoor(cellSvte.getI(), cellSvte.getJ());//ca marche
+					}
+				}else {
+					if( cellCourante.getNature().equals(Cell.EMP) && cellSvte.getNature().equals(Cell.DWC)) {
+						if( player.getClefFound()){
+							stacksSvte.getChildren().remove(stacksSvte.getChildren().size()-1);//supp la porte fermee
+							stacksSvte.getChildren().add(po);//la porte ouverte
+							stacksSvte.getChildren().get(stacksSvte.getChildren().size()-1).setRotate(90);
+							Node p = stacksCourante.getChildren().remove(stacksCourante.getChildren().size()-1);//supp le joueur
+							stacksSvte.getChildren().add(p);//add le joueur
+
+							env.OpenDoor(cellSvte.getI(), cellSvte.getJ());
+						}
 					}else {
 						if( (cellCourante.getNature().equals(Cell.DNO)||cellCourante.getNature().equals(Cell.DWO)||
 								cellCourante.getNature().equals(Cell.IN)) && cellSvte.getNature().equals(Cell.EMP)) {
@@ -545,7 +541,6 @@ public class Controller extends Application {
 					}
 				}
 			}
-
 		}
 	}
 

@@ -77,7 +77,6 @@ public class CowImplem implements CowService, EntityService{
 	}
 
 	public boolean casePossible(int i , int j) {
-
 		if( !(i == this.getEnv().getEntities().get(0).getRow() && j == this.getEnv().getEntities().get(0).getCol()) &&
 				i >= 0 && j >=0 && i < this.getEnv().getHeight() && j < this.getEnv().getWidth() &&
 				!(j == 0 && i == 0))
@@ -87,13 +86,14 @@ public class CowImplem implements CowService, EntityService{
 					! this.getEnv().getCells()[i][j].getNature().equals(Cell.DNC)) { 
 				return true;
 			}
+		
 		return false;
 	}
 
 	@Override
 	public void forward() {
 		if( this.face.equals(Face.N)) {
-			if( casePossible(this.row-1, this.col)){
+			if( casePossible(this.row-1, this.col)) {
 				this.getEnv().getCells()[this.row][this.col].setContent(OptionEnum.No);
 				this.getEnv().getCells()[this.row-1][this.col].setContent(OptionEnum.So);
 				this.row--;
@@ -157,7 +157,6 @@ public class CowImplem implements CowService, EntityService{
 					}
 				}
 			}
-
 		}
 	}
 

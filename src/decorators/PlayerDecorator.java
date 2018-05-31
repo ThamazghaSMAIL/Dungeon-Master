@@ -194,4 +194,12 @@ public class PlayerDecorator implements PlayerService{
 	}
 
 
+
+
+	@Override
+	public void setClefFound(boolean b) {
+		serv.setClefFound(b);
+	}
+
+
 }

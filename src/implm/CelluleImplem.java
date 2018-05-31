@@ -17,6 +17,7 @@ public class CelluleImplem implements CelluleService {
 	public OptionEnum opt;
 	public OptionFood food ;
 	boolean clef;
+	
 	protected EnvironnementService env;
 
 	@Override

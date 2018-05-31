@@ -1,5 +1,6 @@
 package implm;
 
+import servives.CelluleService;
 import servives.EnvironnementService;
 import servives.PlayerService;
 import tools.Cell;
@@ -99,7 +100,8 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 		if(this.getFace().equals(Face.N)) {
 			cellSvte = this.getEnv().getCells()[this.getRow()-1][this.getCol()];
 			if( this.row -1 >= 0)
-				if( ! cellSvte.getNature().equals(Cell.WLL) ) {
+				if( ! cellSvte.getNature().equals(Cell.WLL) && !( (cellSvte.getNature().equals(Cell.DNC)||cellSvte.getNature().equals(Cell.DWC)) 
+						&& !this.clefFound  && !YaUnMonstre(cellSvte))) {
 					if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No)){
 						if( cellSvte.getI() == env.getClef().getI() &&  cellSvte.getJ() == env.getClef().getJ()) {
 
@@ -109,7 +111,6 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 						this.row--;
 					}else {
 						if(this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.Fo)){
-							System.out.println("there is food");
 							this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 							cellSvte.setContent(OptionEnum.So);
 							this.row--;
@@ -121,7 +122,8 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 			if(this.getFace().equals(Face.S)) {
 				cellSvte = this.getEnv().getCells()[this.getRow()+1][this.getCol()];
 				if( this.row+1 < this.getEnv().getHeight() )
-					if( ! cellSvte.getNature().equals(Cell.WLL) ) 
+					if( ! cellSvte.getNature().equals(Cell.WLL) && !( (cellSvte.getNature().equals(Cell.DNC)||cellSvte.getNature().equals(Cell.DWC)) 
+							&& !this.clefFound ) && !YaUnMonstre(cellSvte)) 
 						if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No) ) {
 							this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 							cellSvte.setContent(OptionEnum.So);
@@ -133,7 +135,8 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 				if(this.getFace().equals(Face.E)) {
 					cellSvte = this.getEnv().getCells()[this.getRow()][this.getCol()+1];
 					if( this.col+1 < this.env.getWidth() )
-						if( ! cellSvte.getNature().equals(Cell.WLL) ) 
+						if( ! cellSvte.getNature().equals(Cell.WLL) && !( (cellSvte.getNature().equals(Cell.DNC)||cellSvte.getNature().equals(Cell.DWC)) 
+								&& !this.clefFound ) && !YaUnMonstre(cellSvte) ) 
 							if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No) ) {
 								this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 								cellSvte.setContent(OptionEnum.So);
@@ -144,7 +147,8 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 					if(this.getFace().equals(Face.W)) {
 						cellSvte = this.getEnv().getCells()[this.getRow()][this.getCol()-1];
 						if( this.col -1 >= 0 ) {
-							if( ! cellSvte.getNature().equals(Cell.WLL) ) 
+							if( ! cellSvte.getNature().equals(Cell.WLL) && !( (cellSvte.getNature().equals(Cell.DNC)||cellSvte.getNature().equals(Cell.DWC)) 
+									&& !this.clefFound && !YaUnMonstre(cellSvte) )) 
 								if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No) ) {
 									this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 									cellSvte.setContent(OptionEnum.So);
@@ -173,7 +177,8 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 
 
 			if( this.row+1 < this.getEnv().getHeight())
-				if( ! cellSvte.getNature().equals(Cell.WLL) ) 
+				if( ! cellSvte.getNature().equals(Cell.WLL) && !( (cellSvte.getNature().equals(Cell.DNC)||cellSvte.getNature().equals(Cell.DWC)) 
+						&& !this.clefFound && !YaUnMonstre(cellSvte) )) 
 					if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No) ){
 						this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 						cellSvte.setContent(OptionEnum.So);
@@ -185,7 +190,8 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 
 
 				if( this.row-1 >= 0)
-					if( ! cellSvte.getNature().equals(Cell.WLL) ) 
+					if( ! cellSvte.getNature().equals(Cell.WLL) && !( (cellSvte.getNature().equals(Cell.DNC)||cellSvte.getNature().equals(Cell.DWC)) 
+							&& !this.clefFound && !YaUnMonstre(cellSvte))) 
 						if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No) ){
 							this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 							cellSvte.setContent(OptionEnum.So);
@@ -196,7 +202,8 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 					cellSvte = this.getEnv().getCells()[this.getRow()][this.getCol()-1];
 
 					if( this.col-1 >= 0)
-						if( ! cellSvte.getNature().equals(Cell.WLL) ) 
+						if( ! cellSvte.getNature().equals(Cell.WLL) && !( (cellSvte.getNature().equals(Cell.DNC)||cellSvte.getNature().equals(Cell.DWC)) 
+								&& !this.clefFound && !YaUnMonstre(cellSvte))) 
 							if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No) ){
 								this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 								cellSvte.setContent(OptionEnum.So);
@@ -207,7 +214,8 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 						cellSvte = this.getEnv().getCells()[this.getRow()][this.getCol()+1];
 
 						if( this.col+1 < this.getEnv().getWidth() )
-							if( ! cellSvte.getNature().equals(Cell.WLL) ) 
+							if( ! cellSvte.getNature().equals(Cell.WLL)&& !( (cellSvte.getNature().equals(Cell.DNC)||cellSvte.getNature().equals(Cell.DWC)) 
+									&& !this.clefFound && !YaUnMonstre(cellSvte) ) ) 
 								if( this.env.getCells()[cellSvte.getI()][cellSvte.getJ()].getContent().equals(OptionEnum.No) ){
 									this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 									cellSvte.setContent(OptionEnum.So);
@@ -271,7 +279,8 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 
 		if( this.face.equals(Face.N)) {
 			cellSvte = this.getEnv().getCells()[this.getRow()][this.getCol()+1];
-			if( this.col+1 < this.getEnv().getWidth() && ! cellSvte.getNature().equals(Cell.WLL)) {
+			if( this.col+1 < this.getEnv().getWidth() && ! cellSvte.getNature().equals(Cell.WLL) && !YaUnMonstre(cellSvte) &&
+					!( (cellSvte.getNature().equals(Cell.DNC)||cellSvte.getNature().equals(Cell.DWC)) && !this.clefFound )) {
 				this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 				cellSvte.setContent(OptionEnum.So);
 				this.col++;
@@ -279,7 +288,8 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 		}else {
 			if( this.face.equals(Face.S)) {
 				cellSvte = this.getEnv().getCells()[this.getRow()][this.getCol()-1];
-				if( this.col-1 >=0 && cellSvte.getNature().equals(Cell.WLL)) {
+				if( this.col-1 >=0 && cellSvte.getNature().equals(Cell.WLL)&& !YaUnMonstre(cellSvte) &&
+						!( (cellSvte.getNature().equals(Cell.DNC)||cellSvte.getNature().equals(Cell.DWC)) && !this.clefFound )) {
 					cellSvte.setContent(OptionEnum.So);
 					this.col--;
 				}
@@ -287,21 +297,21 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 			}else {
 				if( this.face.equals(Face.E)) {
 					cellSvte = this.getEnv().getCells()[this.getRow()+1][this.getCol()];
-					if( this.row+1< this.env.getHeight() && ! cellSvte.getNature().equals(Cell.WLL)) {
+					if( this.row+1< this.env.getHeight() && ! cellSvte.getNature().equals(Cell.WLL)&& !YaUnMonstre(cellSvte) &&
+							!( (cellSvte.getNature().equals(Cell.DNC)||cellSvte.getNature().equals(Cell.DWC)) && !this.clefFound )) {
 						this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 						cellSvte.setContent(OptionEnum.So);
 						this.row++;
 					}
-
 				}else {
 					if( this.face.equals(Face.W)) {
 						cellSvte = this.getEnv().getCells()[this.getRow()-1][this.getCol()];
-						if( this.row-1 >=0 && ! cellSvte.getNature().equals(Cell.WLL)) {
+						if( this.row-1 >=0 && ! cellSvte.getNature().equals(Cell.WLL)&& !YaUnMonstre(cellSvte) &&
+								!( (cellSvte.getNature().equals(Cell.DNC)||cellSvte.getNature().equals(Cell.DWC)) && !this.clefFound )) {
 							this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 							cellSvte.setContent(OptionEnum.So);
 							this.row--;
 						}
-
 					}
 				}
 			}
@@ -318,7 +328,8 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 
 		if( this.face.equals(Face.N)) {
 			cellSvte = this.getEnv().getCells()[this.getRow()][this.getCol()-1];
-			if( this.col-1 >=0 && ! cellSvte.getNature().equals(Cell.WLL)) {
+			if( this.col-1 >=0 && ! cellSvte.getNature().equals(Cell.WLL)&& !YaUnMonstre(cellSvte) &&
+					!( (cellSvte.getNature().equals(Cell.DNC)||cellSvte.getNature().equals(Cell.DWC)) && !this.clefFound ) ) {
 				this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 				cellSvte.setContent(OptionEnum.So);
 				this.col--;
@@ -327,7 +338,8 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 		}else {
 			if( this.face.equals(Face.S)) {
 				cellSvte = this.getEnv().getCells()[this.getRow()][this.getCol()+1];
-				if( this.col+1 < this.getEnv().getWidth() && !cellSvte.getNature().equals(Cell.WLL)) {
+				if( this.col+1 < this.getEnv().getWidth() && !cellSvte.getNature().equals(Cell.WLL)&& !YaUnMonstre(cellSvte) &&
+						!( (cellSvte.getNature().equals(Cell.DNC)||cellSvte.getNature().equals(Cell.DWC)) && !this.clefFound )) {
 					this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 					cellSvte.setContent(OptionEnum.So);
 					this.col++;
@@ -336,7 +348,9 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 			}else {
 				if( this.face.equals(Face.E)) {
 					cellSvte = this.getEnv().getCells()[this.getRow()-1][this.getCol()];
-					if( this.row-1 >=0 && !cellSvte.getNature().equals(Cell.WLL)) {
+					if( this.row-1 >=0 && !cellSvte.getNature().equals(Cell.WLL)&& !YaUnMonstre(cellSvte) &&
+							!( (cellSvte.getNature().equals(Cell.DNC)||cellSvte.getNature().equals(Cell.DWC)) && !this.clefFound )) {
+						
 						this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 						cellSvte.setContent(OptionEnum.So);
 						this.row--;
@@ -345,7 +359,9 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 				}else {
 					if( this.face.equals(Face.W)) {
 						cellSvte = this.getEnv().getCells()[this.getRow()+1][this.getCol()];
-						if( this.row+1 < this.getEnv().getHeight() && !cellSvte.getNature().equals(Cell.WLL)) {
+						if( this.row+1 < this.getEnv().getHeight() && !cellSvte.getNature().equals(Cell.WLL)&& !YaUnMonstre(cellSvte) &&
+								!( (cellSvte.getNature().equals(Cell.DNC)||cellSvte.getNature().equals(Cell.DWC)) && !this.clefFound )) {
+							
 							this.env.getCells()[this.row][this.col].setContent(OptionEnum.No);
 							cellSvte.setContent(OptionEnum.So);
 							this.row++;
@@ -365,6 +381,7 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 		if( this.getRow() == this.env.getClef().getI() && this.getCol() == this.env.getClef().getJ() ) {
 			this.clefFound = true;
 		}
+
 
 		switch(this.getLastCommande()){
 		case FF:
@@ -440,7 +457,6 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 
 	@Override
 	public Commande getLastCommande() {
-
 		return this.lastCommande;
 	}
 
@@ -452,6 +468,11 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 	@Override
 	public boolean getClefFound() {
 		return this.clefFound;
+	}
+
+	@Override
+	public void setClefFound(boolean b) {
+		this.clefFound= b;
 	}
 
 	@Override
@@ -474,5 +495,14 @@ public class PlayerImplem extends EntityImplem implements PlayerService {
 		return null;
 	}
 
+	public boolean YaUnMonstre(CelluleService c){
+		for(int i = 1 ; i < this.env.getEntities().size() ; i++ ){
+			if( this.getEnv().getEntities().get(i).isEnVie() &&  this.getEnv().getEntities().get(i).getRow() == c.getI() 
+					&& this.getEnv().getEntities().get(i).getCol() == c.getJ() )
+				return true;
+		}
+		return false;
+		
+	}
 
 }

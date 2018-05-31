@@ -71,6 +71,8 @@ public interface PlayerService extends EntityService {
 	 * @return
 	 */
 	public Cell getContentP(int i , int j);
+
+	public void setClefFound(boolean b);
 	
 	
 }
