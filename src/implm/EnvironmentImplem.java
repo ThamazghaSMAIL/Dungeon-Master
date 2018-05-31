@@ -35,40 +35,40 @@ public class EnvironmentImplem extends MapImplem implements EnvironnementService
 		return cells[i][j].getNature();
 	}
 
-	@Override
-	public void OpenDoor(int i, int j) {
-		if( this.cells[i][j].getNature().equals(Cell.DNC )){
-			if( ! ((PlayerService) entities.get(0)).getClefFound() )
-				System.out.println("you have not the key ");
-			
-			this.cells[i][j].setNature(Cell.DNO);
-		} else {
-			if( cells[i][j].getNature().equals(Cell.DWC) ){
-				cells[i][j].setNature(Cell.DWO);
-			}else{
-				System.out.println(" ce n'est pas une porte -_- ");
-			}
-		}
-	}
+//	@Override
+//	public void OpenDoor(int i, int j) {
+//		if( this.cells[i][j].getNature().equals(Cell.DNC )){
+//			if( ! ((PlayerService) entities.get(0)).getClefFound() )
+//				System.out.println("you have not the key ");
+//			
+//			this.cells[i][j].setNature(Cell.DNO);
+//		} else {
+//			if( cells[i][j].getNature().equals(Cell.DWC) ){
+//				cells[i][j].setNature(Cell.DWO);
+//			}else{
+//				System.out.println(" ce n'est pas une porte -_- ");
+//			}
+//		}
+//	}
 
-	//modification
-	@Override
-	public void CloseDoor(int i, int j) {
-		if(  this.cells[i][j].getContent().equals(OptionEnum.No) ) {
-
-			if( getCell(i, j).getNature() == Cell.DNO ){
-				getCell(i, j).setNature(Cell.DNC);
-			}else{
-				if( getCell(i, j).getNature() == Cell.DWO ){
-					getCell(i, j).setNature(Cell.DWC);
-				}else{
-					System.out.println(" ce n'est pas une porte -_-");
-				}
-			}
-		}else {
-			System.out.println("cette porte ne peut pas être fermée ! il y a un Mob sur place");
-		}
-	}
+//	//modification
+//	@Override
+//	public void CloseDoor(int i, int j) {
+//		if(  this.cells[i][j].getContent().equals(OptionEnum.No) ) {
+//
+//			if( getCell(i, j).getNature() == Cell.DNO ){
+//				getCell(i, j).setNature(Cell.DNC);
+//			}else{
+//				if( getCell(i, j).getNature() == Cell.DWO ){
+//					getCell(i, j).setNature(Cell.DWC);
+//				}else{
+//					System.out.println(" ce n'est pas une porte -_-");
+//				}
+//			}
+//		}else {
+//			System.out.println("cette porte ne peut pas être fermée ! il y a un Mob sur place");
+//		}
+//	}
 	
 	@Override
 	public boolean YaUnMob(int i , int j ) {

@@ -21,14 +21,14 @@ public interface EnvironnementService extends  MapService {
 	 * @param i
 	 * @param j
 	 */
-	public void OpenDoor (int i,int j);
+	//public void OpenDoor (int i,int j);
 	
 	/**
 	 * pre CloseDoor(M,x,y) requires CellNature(M,x,y) { fDNO, DWO }
 	 * @param i
 	 * @param j
 	 */
-	public void CloseDoor (int i,int j);
+	//public void CloseDoor (int i,int j);
 	
 	/**
 	 * pre init(w,h) requires 0 < w and 0 < h
