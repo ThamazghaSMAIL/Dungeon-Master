@@ -1,8 +1,130 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{natbib}
+\usepackage{graphicx}
+
+\begin{document}
+
+
+\begin{titlepage}
+    \begin{center}
+        \includegraphics[width=0.6\textwidth]{logosorbonne.png}\\[1cm]
+        \textbf{\Large{Master}}\\
+        \huge{Sciences et Technologies du Logiciels}\\
+        \rule{\linewidth}{0.5mm} \\[0.4cm]
+        { \huge \bfseries Devoir CPS : Dungeon Master\\[0.4cm] }
+        \rule{\linewidth}{0.5mm} \\[1.5cm]
+        % Author and supervison
+		\vspace{5mm}
+    \end{center}	 
+    \begin{flushleft}                                       
+    \begin{tabular}{ll} 
+    \textbf{Réalisé par :} 
+    ~\\ 
+    \textbf{Thamazgha SMAIL} \\
+    \textbf{Joseph RASCAR} \\
+    \end{tabular} 
+    \end{flushleft} 
+\end{titlepage}
+
+\newpage
+\thispagestyle{empty}
+\tableofcontents
+\newpage
+\thispagestyle{empty}
+\listoffigures
+
+
+
+\newpage
+\section{Introduction}
+Le but de ce projet est de mettre en oeuvre les connaissances acquises en ce qui concerne la spécification et programmation par contrats dans le module CPS en spécifiant d’un jeu similaire à "Dungeon Master"
+
+\section{Manuel d’utilisation}
+
+\subsection{La touche "UP" du clavier}   quand l'utilisateur appuie "UP" le joueur avance dans sa direction courante, Nord initiallement.
+\subsection{La touche "DOWN" du clavier }Quand l'utilisateur appuie sur "DOWN" le joueur recule.
+\subsection{La touche "RIGHT" du clavier }quand l'utilisateur appuie sur "RIGHT" le joueur fait un pas chassé à droite et garde sa direction actuelle.
+
+\subsection{La touche "LEFT" du clavier }dès que l'utilisateur appuie "LEFT" le joueur fait un pas chassé à gauche et garde également sa direction actuelle.
+\subsection{La touche "CTRL" du clavier }
+Quand l'utilisateur appuie sur "CTRL" le joueur tourne à gauche, sa position ne change évidement pas, mais sa direction change en fonction de sa direction actuelle, par exemple si sa direction courante est "Nord", sa direction après avoir appuyer sur "CTRL" sera "Ouest"
+
+\subsection{La touche "ALT" du clavier }Dès que  l'utilisateur appuie sur "ALT" le joueur tourne à droite, sa position ne change également pas, mais sa direction change en fonction de sa direction actuelle, par exemple si sa direction courante est "Nord", sa direction après avoir appuyer sur "ALT" sera "Est".
+\subsection{La touche "ENTER" du clavier} Si le joueur et un des monstres sont assez proches, le joueur peut attaquer le monstre en appuyant sur "ENTER", sinon le clique sur cette touche n'a aucun effet.
+
+
+
+\section{La spécification formelle du projet}
+
+\subsection{Service Mob }
+L'environnement d'un Mob peut être facilement connu à partir de Environnement, mais nous avons préférer garder l'observateur qui permet de récuperer ce dernier dans le cas d'une extention du jeu où celui ci peut avoir plusieurs environnements, et ainsi le Mob peut éventuellement changer d'environnement.
+\\
+Dans les méthodes Forward et Backward, nous avons ajouté une post-condition qui vérifie que le Mob reste dans la même direction lorsqu'il avance ou recule.
+\subsection{Service Environnement }
+Ce service contient un observateur qui sert à récupérer la liste des Mobs qu'il y à dans l'environnement.
+Nous pouvons ainsi ajouter un Mob facilement à ce dernier.
+\subsection{Service Combat }
+C'est le service qui gère les combats entre le joueur et les monstres 
+\subsection{Service Player}
+Nous avons choisit d'ajouter un observateur à ce service qui est \texttt{TresorFound} : \textrm{[Player]} $\rightarrow$ \textrm{Boolean}, il permet d'observer si le joueur a trouvé le trésor. le choix de l'avoir rajouter dans ce service est pour le cas du même jeu en multi-joueurs, cela permettrai de connaître le joueur qui a trouvé le trésor.
+
+\subsection{Service Clef }
+Nous avons choisit d'ajouter un service Clef.
+La clef est inserée dans une case accessible depuis la position du joueur ( pas de mur et pas de porte fermée ).
+\\
+\begin{tabular}{rl}
+\textbf{Service}: & \textrm{Clef}  \\
+\textbf{Types}: & \textrm{bool}, \textrm{int} \\
+\textbf{Observators}: & \textbf{const}~\texttt{i}: \textrm{[Clef]} $\rightarrow$ \textrm{int} \\
+& \textbf{const}~\texttt{j}: \textrm{[Clef]} $\rightarrow$ \textrm{int} \\
+& \textbf{const}~\texttt{getEnv}: \textrm{[Clef]} $\rightarrow$ \textrm{[Environment]} \\
+\textbf{Constructors}: & \texttt{init}: \textrm{Environment} $\times$ \textrm{int} $\times$ \textrm{int} $\rightarrow$ \textrm{[Clef]} \\
+& \quad\quad \textbf{pre}~\texttt{init(env,i,j)}~\textbf{requires}~ i $>=0$ ~\textbf{and}~ j$>=0$ \\ & \quad\quad\quad~\textbf{and}~i $<=$ Environnement :: Height(getEnv()) \\
+& \quad\quad\quad~\textbf{and}~j $<=$ Environnement :: Width(getEnv()) \\
+\textbf{Operators}: & $\top$ \\
+       \textbf{Observation}: \\
+       $[$invariant$]$: & $\top$ \\
+       $[$init$]$: & \texttt{getI(init(env,i,j))} = \texttt{i} \\
+       & \texttt{getJ(init(env,i,j))} = \texttt{j} \\
+       & \texttt{getEnv(init(env,i,j))} = \texttt{env} \\
+\end{tabular}
+
+\subsection{Service Trésor}
+Nous avons choisit d'ajouter un service Trésor afin de permettre une future perspective qui est d'avoir plusieurs trésor.
+\\
+\begin{tabular}{rl}
+\textbf{Service}: & \textrm{Trésor}  \\
+\textbf{Types}: & \textrm{bool}, \textrm{int}, \textrm{Cell}  \\
+\textbf{Observators}: & \textbf{const}~\texttt{i}: \textrm{[Trésor]} $\rightarrow$ \textrm{int} \\
+& \textbf{const}~\texttt{j}: \textrm{[Trésor]} $\rightarrow$ \textrm{int} \\
+& \textbf{const}~\texttt{getEnv}: \textrm{[Trésor]} $\rightarrow$ \textrm{[Environment]} \\
+\textbf{Constructors}: & \texttt{init}: \textrm{Environment} $\times$\textrm{int} $\times$ \textrm{int} $\rightarrow$ \textrm{[Trésor]} \\
+& \quad\quad \textbf{pre}~\texttt{init(env,i,j)}~\textbf{requires}~ i $>=0$ ~\textbf{and}~ j$>=0$ \\ & \quad\quad\quad~\textbf{and}~i $<=$ Environnement :: Height(getEnv()) \\
+& \quad\quad\quad~\textbf{and}~j $<=$ Environnement :: Width(getEnv()) \\
+\textbf{Operators}: & $\top$ \\
+       \textbf{Observation}: \\
+       $[$invariant$]$: & $\top$ \\
+       $[$init$]$: & \texttt{getI(init(env,i,j))} = \texttt{i} \\
+       & \texttt{getJ(init(env,i,j))} = \texttt{j} \\
+       & \texttt{getEnv(init(env,i,j))} = \texttt{env} \\
+\end{tabular}
+
+
+
+
+\subsection{Service Cellule}
+Vu que la possibilité d’accéder au contenu d’une cellule est nécessaire a la fois dans EditMap, Map et Environnement, nous avons décider d’ajouter cette méthode dans le service Cellule afin que ceci soit possible pour les trois derniers services 
+\\
+Nous n'avons pas besoin de vérifier que les coordonnées de la cellule sont comprises entre 0 et la largeur/hauteur de l'environnement, dans ce service car cela est déjà vérifié à l'initialisation de l'environnement.
+\\
+Nous n'avons pas d'opérations pour modifier les coordonnées d'une cellule car on a pas besoin de ça dans notre cas.
+\\ 
+L'option Nourriture est ajoutée dans cellule, quand le joueur tue le monstre, ce dernier se transforme en nourriture, il est bien sûr possible de rajouter de la nourriture dans des cases aléatoirement ou en les choisissant, ce qui explique notre choix.
 \begin{tabular}{rl}
 \textbf{Service}: & \textrm{Cellule}  \\
 \textbf{Types}: & \textrm{bool}, \textrm{int}, \textrm{Cell}, OptionContent{No,So}, OptionFood{Fo,No}  \\
 \textbf{Observators}: & \textbf{const}~\texttt{i}: \textrm{[Cellule]} $\rightarrow$ \textrm{int} \\
-
 & \textbf{const}~\texttt{j}: \textrm{[Cellule]} $\rightarrow$ \textrm{int} \\
 & \texttt{getNature}: \textrm{[Cellule]} $\rightarrow$ \textrm{Cell} \\
 & \texttt{getContent}: \textrm{[Cellule]} $\rightarrow$ \textrm{OptionContent} \\
@@ -23,3 +145,83 @@
        $[$setContent$]$: & \texttt{getContent}(\texttt{setContent(C,content)}) = \textbf{content} \\
 $[$setNature$]$: & \texttt{getNature}(\texttt{setNature(C,cell)} = \textbf{cell} \\
 \end{tabular}
+
+
+\subsection{Service Combat}
+Le nombre de points de vie des monstres et des joueurs est initialisé à 3, quand le joueur frappe un monstre le nombre de points du monstre est décrementé de 1 et celui du joueur incrementé de 1 et c'est l'inverse si c'est le monstre qui frappe le joueur.
+\\
+la méthode "frapper" du monstre s'excute aléatoirement (dans step)
+\\ 
+Quand le joueur réussit à tuer le monstre ( nombre de points de vie du monstre = 0 ), il se transforme en nourriture, le joueur peut alors manger et gagner un point de vie.
+\\
+Dans le cas contraire, si le monstre tue le joueur, alors la partie est finie, le joueur peut évidement relancer une partie ou quitter.
+\\
+Le combat est initialisé uniquement avec le joueur, ensuite quand il est proche du monstre, ce dernier est ajouté au combat et debutCombat est initialisé à vrai.
+\newpage
+\begin{tabular}{rl}
+\textbf{Service}: & \textrm{Combat}  \\
+\textbf{Types}: & \textrm{bool}, \textrm{int}, \textrm{Cell}, OptionContent{No,So}, OptionFood{Fo,No}  \\
+
+
+\textbf{Observators}: & \texttt{getPlayer}: \textrm{[Combat]} $\rightarrow$ \textrm{Player} \\
+& \texttt{getVache}: \textrm{[Combat]} $\rightarrow$ \textrm{Cow} \\
+& \texttt{getEnv}: \textrm{[Combat]} $\rightarrow$ \textrm{Environnement} \\
+& \texttt{isFini}: \textrm{[Combat]} $\rightarrow$ \textrm{boolean} \\
+& \texttt{debutCombat}: \textrm{[Combat]} $\rightarrow$ \textrm{boolean} \\
+\textbf{Constructors}: & \texttt{init}: \textrm{Player} $\times$ \textrm{Vache} $\rightarrow$ \textrm{[Combat]} \\
+& \quad\quad \textbf{pre}~ \texttt{init(p,v)}~\textbf{requires}~ Player :: getHp(p) $>$ 0 and \\
+& \quad\quad\quad Cow :: getHp(p) $>$ 0 and Environnement :: getEntities().size() $>=$ 2\\
+\textbf{Operators}: 
+& \texttt{PlayerfrappeMonstre}: \textrm{[Combat]}$\rightarrow$ \textrm{[Combat]} \\
+& \quad\quad \textbf{pre}~ \texttt{PlayerfrappeMonstre()}~\textbf{requires}~ Player :: isEnvie(getPlayer()) $=$ true \\
+& \quad \quad \quad and Cow :: isEnvie(getCow()) $=$ true and proche(getPlayer() , getVache())\\
+
+& \texttt{VachefrappePlayer}: \textrm{[Combat]}$\rightarrow$ \textrm{[Combat]} \\
+& \quad\quad \textbf{pre}~
+\texttt{VachefrappePlayer()}~\textbf{requires}~ Player :: isEnvie(getPlayer()) $=$ true \\
+& \quad \quad \quad and Cow :: isEnvie(getCow()) $=$ true and proche(getPlayer() , getVache())\\
+
+& \texttt{proche}: \textrm{[Combat]} $\times$ Player $\times$ Cow $\rightarrow$ \textrm{[Combat]} \\
+& \quad\quad \textbf{pre}~
+\texttt{proche(C,p,v)}~\textbf{requires}~ \\
+&\quad \quad \quad Player :: getRow(p) == Cow :: getRow(v) and\\
+&\quad \quad \quad $|$ Player :: getCol(p) - Cow :: getCol(v $|$ == 1 ) OR \\
+
+&\quad \quad \quad Player :: getCol(p) == Cow :: getCol(v) and\\
+&\quad \quad \quad $|$ Player :: getRow(p) - Cow :: getRow(v) $|$ == 1 ) \\
+&\quad \quad \quad and debutCombat(C)==true \\
+
+& \texttt{touché}: \textrm{[Combat]} $\times$ Entity $\times$ Entity $\rightarrow$ \textrm{[Combat]} \\
+& \quad\quad \textbf{pre}~
+\texttt{touché(C,e1,e2)}~\textbf{requires}~ \\
+&\quad \quad \quad Entity :: getFace(e1) =(N,S) and Entity :: getCol(e1) = Entity :: getCol(e2) \\
+&\quad \quad \quad and Entity :: getRow(e1) $-$ Entity :: getRow(e2)== (1,-1) OR
+\\
+& \quad \quad \quad Entity :: getFace(e1) =(E,W) and Entity :: getRow(e1) =Entity :: getRow(e2) and Entity :: getCol(e1) $-$ Entity :: getCol(e2) =(-1,1)
+
+
+
+\end{tabular}
+
+\newpage
+\section{Implementation}
+L'interface graphique a été réalisée en utilisant JavaFX.
+Ci dessous un aperçu de cette dernière : 
+\begin{figure}[!h]
+    \centering
+    \includegraphics[height=300pt,width=300pt]{cps.png}
+    \caption{Aperçu sur l'interface graphique.}
+    \label{BDDexple}
+\end{figure}
+\paragraph{}
+
+\newpage
+\section{Tests}
+Les tests ont été réalisés pour les services Map, EditMap et Cellule.
+\paragraph{}
+
+\section{Conclusion}
+Ce projet nous a permi d'appliquer les connaissances acquises pendant les cours, TD et TME du module CPS, la spécification et programmation par contrats nous a aidé à poser les bases du projet, bien cadrer chaque service de ce dernier avant de l'implémenter mais aussi à réduire le nombre de bugs grace aux tests.
+
+\end{document}
+
