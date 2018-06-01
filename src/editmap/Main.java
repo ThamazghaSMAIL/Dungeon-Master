@@ -19,7 +19,7 @@ public class Main extends Application {
 		try {
 			FXMLLoader fxml = new FXMLLoader(getClass().getResource("interface1.fxml"));
 			VBox root = fxml.load();
-			Controller controller = fxml.getController();
+			ControllerEdit controller = fxml.getController();
 			Platform.runLater(()->controller.init());
 			PrintWriter out = new PrintWriter( new BufferedOutputStream(new FileOutputStream("Map.txt")));
 			//controller.ecrire(out);

@@ -22,8 +22,6 @@
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
-                <exclude name="**/*.launch"/>
-                <exclude name="**/*.xtend"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -55,15 +53,28 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
+    <target name="EditMapTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="tests.EditMapTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
+            <classpath refid="Dungeon-Master.classpath"/>
+        </junit>
+    </target>
     <target name="testJo">
         <java classname="testJo" failonerror="true" fork="yes">
             <classpath refid="Dungeon-Master.classpath"/>
         </java>
     </target>
-    <target name="Controller">
-        <java classname="ui.Controller" failonerror="true" fork="yes">
+    <target name="RunTests">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="tests.RunTests" todir="${junit.output.dir}"/>
+            <jvmarg line="-ea"/>
             <classpath refid="Dungeon-Master.classpath"/>
-        </java>
+        </junit>
     </target>
     <target name="CelluleTest">
         <mkdir dir="${junit.output.dir}"/>
@@ -74,14 +85,15 @@
             <classpath refid="Dungeon-Master.classpath"/>
         </junit>
     </target>
-    <target name="EditMapTest">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="tests.EditMapTest" todir="${junit.output.dir}"/>
-            <jvmarg line="-ea"/>
+    <target name="RunEditMap">
+        <java classname="editmap.Main" failonerror="true" fork="yes">
             <classpath refid="Dungeon-Master.classpath"/>
-        </junit>
+        </java>
+    </target>
+    <target name="Controller">
+        <java classname="ui.Controller" failonerror="true" fork="yes">
+            <classpath refid="Dungeon-Master.classpath"/>
+        </java>
     </target>
     <target name="junitreport">
         <junitreport todir="${junit.output.dir}">
@@ -91,21 +103,4 @@
             <report format="frames" todir="${junit.output.dir}"/>
         </junitreport>
     </target>
-              	<target name="RunTests">
-
-              	        <mkdir dir="${junit.output.dir}"/>
-
-              	        <junit fork="yes" printsummary="withOutAndErr">
-
-              	            <formatter type="xml"/>
-
-              	            <test name="test.RunTests" todir="${junit.output.dir}"/>
-
-              	            <jvmarg line="-ea"/>
-
-              	            <classpath refid="Dungeon-Master.classpath"/>
-
-              	        </junit>
-
-              	</target>
 </project>

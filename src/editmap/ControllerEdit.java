@@ -14,7 +14,7 @@ import servives.CelluleService;
 import servives.EnvironnementService;
 import tools.Cell;
 
-public class Controller {
+public class ControllerEdit {
 	CelluleService[][] cells ;
 	EnvironnementService env = new EnvironmentImplem();
 
